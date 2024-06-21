@@ -329,7 +329,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
-  m_UseSpriteMesh: 0
+  m_UseSpriteMesh: 1
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &51075648
 CanvasRenderer:
@@ -373,6 +373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c10f7a0e0437d44db95832c6dd0feda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainUI: {fileID: 902808617}
 --- !u!1 &256219664
 GameObject:
   m_ObjectHideFlags: 0
@@ -2715,8 +2716,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6bf9c4e84e3d1b449332f3c53cdf965, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  endFrame: 0
+  endFrame_open: 0
+  endFrame_close: 0
   MainUI: {fileID: 902808617}
+  inventoryTab: 0
 --- !u!1 &961293029
 GameObject:
   m_ObjectHideFlags: 0

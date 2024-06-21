@@ -7,12 +7,14 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance;
-    public bool endFrame;
+    public bool endFrame_open;
+    public bool endFrame_close;
     [SerializeField] public GameObject MainUI;
     private GameObject bg;
     private GameObject baseUI;
     private Animator bgAnimate;
     private Animator baseUIAnimate;
+    public int inventoryTab; // 1 - Profile
 
     //Profile References
     private GameObject profileParent;
@@ -65,15 +67,16 @@ public class InventoryManager : MonoBehaviour
     public void OpenInventory() {
         MainUI.SetActive(false);
 
+        //Active
+        bg.SetActive(true);
+        baseUI.SetActive(true);
+
         //Animate
         bgAnimate = bg.GetComponent<Animator>();
         baseUIAnimate = baseUI.GetComponent<Animator>();
         bgAnimate.Play("BGOpen");
-        baseUIAnimate.SetBool("IsOpen", true);
 
-        //Active
-        bg.SetActive(true);
-        baseUI.SetActive(true);
+        baseUIAnimate.SetBool("IsOpen", true);
     }
 
     public void CloseInventory() {
@@ -81,14 +84,6 @@ public class InventoryManager : MonoBehaviour
     }
 
     void Update() {
-        //Animation
-        if(this.endFrame == true) {
-            bg.SetActive(false);
-            baseUI.SetActive(false);
-            MainUI.SetActive(true);
-            this.endFrame = false;
-        }
-
         //Profile
         UpdateProfile();
 
