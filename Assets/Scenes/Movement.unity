@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 32528903}
   - component: {fileID: 32528902}
   m_Layer: 5
-  m_Name: Text (TMP) (3)
+  m_Name: Race
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -931,7 +931,7 @@ GameObject:
   - component: {fileID: 420369790}
   - component: {fileID: 420369789}
   m_Layer: 5
-  m_Name: Text (TMP) (2)
+  m_Name: Class
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1068,7 +1068,7 @@ GameObject:
   - component: {fileID: 422393475}
   - component: {fileID: 422393474}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2959,6 +2959,60 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   endFrame: 0
   MainUI: {fileID: 902808617}
+--- !u!1 &961293029
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 961293031}
+  - component: {fileID: 961293030}
+  m_Layer: 0
+  m_Name: PlayerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &961293030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961293029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65b21e45c3b12446b7b6fe13f8f0313, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: DevNiks
+  Level: 10
+  Class: 2
+  Race: 5
+  Strength: 0
+  Dexterity: 20
+  Constitution: 0
+  Intelligence: 20
+  Wisdom: 20
+  Charisma: 0
+--- !u!4 &961293031
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961293029}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 877.4417, y: 470.47095, z: 7.3427434}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1125671599
 GameObject:
   m_ObjectHideFlags: 0
@@ -3211,7 +3265,7 @@ GameObject:
   - component: {fileID: 1218419426}
   - component: {fileID: 1218419425}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6897,3 +6951,4 @@ SceneRoots:
   - {fileID: 1339153154}
   - {fileID: 960712533}
   - {fileID: 778000002}
+  - {fileID: 961293031}

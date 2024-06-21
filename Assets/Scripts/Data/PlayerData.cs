@@ -4,6 +4,13 @@ using UnityEngine;
 
 public static class PlayerData
 {
+    //Profile
+    public static int Level { get; set; }
+    public static string Name { get; set; }
+    public static EntityClass Class { get; set; }
+    public static EntityRace Race { get; set; }
+
+    //Stats
     public static int Strength { get; set; }
 
     public static int Dexterity { get; set; }
@@ -16,6 +23,7 @@ public static class PlayerData
 
     public static int Charisma { get; set; }
 
+    //Player Movement
     public static DirectionH directionH { get; set; }
     public static DirectionV directionV { get; set; }
     public static EntityState entityState { get; set; }
