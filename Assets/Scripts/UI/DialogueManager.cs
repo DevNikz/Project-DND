@@ -15,6 +15,7 @@ public class DialogueManager : MonoBehaviour
 
     private GameObject bg;
     private GameObject dgBox;
+    private GameObject nextBtn;
     private GameObject choiceBox1;
     private GameObject choiceBox2;
     private GameObject choiceBox3;
@@ -71,6 +72,8 @@ public class DialogueManager : MonoBehaviour
         //Main Dialogue Texts
         nameText = parent.transform.Find("Canvas").gameObject.transform.Find("DialogueBox").gameObject.transform.Find("Name").gameObject.GetComponent<TextMeshProUGUI>();
         dialogueText = parent.transform.Find("Canvas").gameObject.transform.Find("DialogueBox").gameObject.transform.Find("Border").gameObject.transform.Find("Base").gameObject.transform.Find("Sentence").GetComponent<TextMeshProUGUI>();
+        
+        nextBtn = parent.transform.Find("Canvas").gameObject.transform.Find("DialogueBox").gameObject.transform.Find("Border").gameObject.transform.Find("Base").gameObject.transform.Find("Button").gameObject;
         nameText.text = dialogue.names;
 
         //Clear queue
@@ -112,15 +115,19 @@ public class DialogueManager : MonoBehaviour
         //Check if first set of dialogue has a choice
         switch(numChoices.Peek()) {
             case 1:
+                nextBtn.SetActive(false);
                 DisplayChoice();
                 break;
             case 2:
+                nextBtn.SetActive(false);
                 DisplayChoice();
                 break;
             case 3:
+                nextBtn.SetActive(false);
                 DisplayChoice3();
                 break;
             case 4:
+                nextBtn.SetActive(false);
                 DisplayChoice4();
                 break;
             default:
@@ -148,15 +155,19 @@ public class DialogueManager : MonoBehaviour
 
         switch(numChoices.Peek()) {
             case 1:
+                nextBtn.SetActive(false);
                 DisplayChoice();
                 break;
             case 2:
+                nextBtn.SetActive(false);
                 DisplayChoice();
                 break;
             case 3:
+                nextBtn.SetActive(false);
                 DisplayChoice3();
                 break;
             case 4:
+                nextBtn.SetActive(false);
                 DisplayChoice4();
                 break;
             default:
