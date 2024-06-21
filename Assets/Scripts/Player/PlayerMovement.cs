@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Movement")]
     public Joystick joystick;
+    public AudioSource audioSource;
     private Rigidbody rb;
-
     public bool canMove;
     public float speed = 20f;
     private Vector3 playerSpeed;
@@ -16,6 +17,9 @@ public class PlayerMovement : MonoBehaviour
     public DirectionV vertDirection;
     public EntityState entityState; 
 
+    [Header("SFX")]
+    public bool isPlaying;
+
     private void Start() {
         rb = this.GetComponent<Rigidbody>();
         canMove = true;
@@ -23,18 +27,23 @@ public class PlayerMovement : MonoBehaviour
     
     private void Update() {
         joyInput = new Vector3(joystick.Horizontal, 0f, joystick.Vertical);
-        if(canMove) { 
-            rb.MovePosition(transform.position + joyInput * speed * Time.deltaTime);
+        rb.MovePosition(transform.position + joyInput * speed * Time.deltaTime);
 
-            //Debug Speed
-            playerSpeed = joyInput * speed * Time.deltaTime;
+        if(entityState == EntityState.Moving) {
+            if(!audioSource.isPlaying) audioSource.Play();
         }
+        else audioSource.Stop();
+
+        //Debug Speed
+        playerSpeed = joyInput * speed * Time.deltaTime;
+        
 
         SetState();
         SetDirection();
         horDirection = PlayerData.directionH;
         vertDirection = PlayerData.directionV;
         entityState = PlayerData.entityState;
+        isPlaying = audioSource.isPlaying;
 }
 
     private void SetState() {
