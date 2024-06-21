@@ -7,9 +7,15 @@ public class CollisionController : MonoBehaviour
     public Collider dialogueOther;
 
     void OnTriggerStay(Collider other) {
-        if(other.name == "D") {
+        if(other.name == "DialogueInteract") {
             dialogueOther = other;
-            // other.GetComponent<DialogueTrigger>().TriggerDialogue();
+        }
+
+        if(other.name == "DialogueTrigger") {
+            this.gameObject.GetComponent<PlayerMovement>().joystick.input = Vector2.zero;
+            this.gameObject.GetComponent<PlayerMovement>().joystick.handle.anchoredPosition = Vector2.zero;
+            other.GetComponent<DialogueTrigger>().TriggerDialogue();
+            Destroy(other);
         }
     }
 
@@ -19,8 +25,8 @@ public class CollisionController : MonoBehaviour
 
     public void PrepDialogueInteract() {
         if(dialogueOther != null) {
-            dialogueOther.GetComponent<DialogueTrigger>().TriggerDialogue();
+            dialogueOther.GetComponent<DialogueTrigger>().InteractDialogue();
         }
-        else Debug.Log("DialogueTrigger not found.");
+        else Debug.Log("DialogueTrigger not found.");   
     }
 }

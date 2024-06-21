@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
+using UnityEditor;
 
 [Serializable]
 public class Dialogue
 {
-    public string name;
-    public bool[] orders; //0 - only dialogue | 1 - w/ choice
+    public string names;
+    public int[] hasChoices; // # of choices | 0 - only dialogue
     [TextArea(3, 10)] public string[] sentences;
-    public Choice[] choice;
 }
