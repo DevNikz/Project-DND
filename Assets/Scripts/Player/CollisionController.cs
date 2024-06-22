@@ -9,6 +9,7 @@ public class CollisionController : MonoBehaviour
     void OnTriggerStay(Collider other) {
         if(other.name == "DialogueInteract") {
             dialogueOther = other;
+            other.transform.Find("Context").gameObject.SetActive(true);
         }
 
         if(other.name == "DialogueTrigger") {
@@ -21,6 +22,7 @@ public class CollisionController : MonoBehaviour
 
     void OnTriggerExit(Collider other) {
         dialogueOther = null;
+        other.transform.Find("Context").gameObject.SetActive(false);
     }
 
     public void PrepDialogueInteract() {
