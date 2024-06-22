@@ -494,11 +494,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d40d0fbaefbe44bda7d9f6af17d7e1df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rollForce: 10
+  rollForce: 15
   torqueAmount: 15
   maxRollTime: 3
   minAngularVelocity: 0.1
-  smoothTime: 0.25
+  smoothTime: 0.1
   maxSpeed: 15
   resultText: {fileID: 8900889442009366894}
   shakeClip: {fileID: 0}
@@ -590,7 +590,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2943595787742223916}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 2
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

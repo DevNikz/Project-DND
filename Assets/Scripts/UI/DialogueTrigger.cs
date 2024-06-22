@@ -8,6 +8,8 @@ public class DialogueTrigger : MonoBehaviour
 
     public Choice[] choice;
 
+    public bool outcomeFinish { get; set; }
+
     public void InteractDialogue() {
         DialogueManager.Instance.StartDialogue(this.gameObject, dialogue, choice);
     }

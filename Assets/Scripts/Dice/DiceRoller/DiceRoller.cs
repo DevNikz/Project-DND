@@ -95,13 +95,15 @@ public class DiceRoller : MonoBehaviour {
         //Destroy(particles, 1f);
     }
 
-    [ContextMenu("Roll Dice (Debug)")]
+    [ContextMenu("Roll Dice (Debug For PC)")]
     public void DebugRoll() {
         OnShake();
         resultText.text = "";
 
+        Vector3 tempAccel = new Vector3(Random.Range(-5f, 5f), Random.Range(-5f, 5f), Random.Range(-5f, 5f));
+
         //Add Force
-        rb.AddForce(DiceData.deviceAcceleration * rollForce, ForceMode.Impulse);
+        rb.AddForce(tempAccel * rollForce, ForceMode.Impulse);
         rb.AddTorque(Random.insideUnitSphere * torqueAmount, ForceMode.Impulse);
     }
 
