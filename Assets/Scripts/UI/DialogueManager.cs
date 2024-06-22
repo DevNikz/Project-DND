@@ -493,13 +493,21 @@ public class DialogueManager : MonoBehaviour
     }
 
     public void CheckOutcome(bool outcome) {
-        switch(outcome) {
-            case true:
-                SetSuccessOutcome();
-                break;
-            case false:
-                SetFailedOutcome();
-                break;
+        if(PlayerManager.Instance.alwaysSucceed == true && PlayerManager.Instance.alwaysFail == false) {
+            SetSuccessOutcome();
+        }
+        else if(PlayerManager.Instance.alwaysSucceed == false && PlayerManager.Instance.alwaysFail == true) {
+            SetFailedOutcome();
+        }
+        else {
+            switch(outcome) {
+                case true:
+                    SetSuccessOutcome();
+                    break;
+                case false:
+                    SetFailedOutcome();
+                    break;
+            }
         }
     }
 

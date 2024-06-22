@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+
+    public static PlayerManager Instance;
+
     //Profile
     [Header("Profile")]
     [SerializeField] private string Name;
@@ -19,10 +22,26 @@ public class PlayerManager : MonoBehaviour
     [SerializeField][Range(0,20)] private int Intelligence;
     [SerializeField][Range(0,20)] private int Wisdom;
     [SerializeField][Range(0,20)] private int Charisma;
+
+    [Header("DevMenu")]
+    [SerializeField] public bool EnableMenu;
+    [SerializeField] public bool alwaysSucceed;
+    [SerializeField] public bool alwaysFail;
+    [SerializeField][Range(0,3)] private int StoryProgression;
+
+    void Awake() {
+        if(Instance == null) {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else Destroy(gameObject);
+    }
+
     
     void Update() {
         UpdateProfile();
         UpdateStats();
+        UpdateDebugMenu();
     }
 
     void UpdateProfile() {
@@ -39,5 +58,28 @@ public class PlayerManager : MonoBehaviour
         PlayerData.Intelligence = Intelligence;
         PlayerData.Wisdom = Wisdom;
         PlayerData.Charisma = Charisma;
+    }
+
+    void UpdateDebugMenu() {
+        if(EnableMenu) {
+            this.transform.Find("Debug").gameObject.SetActive(true);
+        }
+        else {
+            this.transform.Find("Debug").gameObject.SetActive(false);
+
+            //Disable Hacks
+            alwaysSucceed = false;
+            alwaysFail = false;
+        }
+    }
+
+    public void AlwaysSucceed() {
+        alwaysSucceed = true;
+        alwaysFail = false;
+    }
+
+    public void AlwaysFail() {
+        alwaysFail = true;
+        alwaysSucceed = false;
     }
 }
