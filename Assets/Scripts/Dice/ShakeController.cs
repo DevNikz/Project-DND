@@ -2,22 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(DiceRoll))]
 public class ShakeController : MonoBehaviour
 {
-    public float shakeThreshold;
-    public float minShakeInterval;
+    public float shakeThreshold = 2.5f;
+    public float minShakeInterval = 0.2f;
 
     private float sqrShakeThreshold;
     private float deltaShake;
-    private DiceRoll diceRoll;
+    private DiceRoller diceRoll;
     public float shakeMagnitude;
 
     [SerializeField] public bool isShaking;
 
     void Start() {
         sqrShakeThreshold = Mathf.Pow(shakeThreshold, 2);
-        diceRoll = GetComponent<DiceRoll>();
+        diceRoll = GetComponent<DiceRoller>();
     }
     
     void OnEnable() {
@@ -44,7 +43,10 @@ public class ShakeController : MonoBehaviour
         if(Input.acceleration.sqrMagnitude >= sqrShakeThreshold &&
             Time.unscaledTime >= deltaShake + minShakeInterval) {
             isShaking = true;
-            diceRoll.RollMobile(Input.acceleration);
+            //diceRoll.RollMobile(Input.acceleration);
+            diceRoll.OnShake();
+            diceRoll.RollDice();
+            DiceData.deviceAcceleration = Input.acceleration;
             deltaShake = Time.unscaledTime;
         }
         else if(Input.acceleration.sqrMagnitude < sqrShakeThreshold) {

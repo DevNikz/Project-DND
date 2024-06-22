@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
@@ -10,6 +11,10 @@ public class DialogueManager : MonoBehaviour
     public static DialogueManager Instance;
     [SerializeField] public GameObject MainUI;
     [SerializeField] public GameObject Player;
+    [SerializeField] public GameObject Dice;
+
+    public int diceRoll;
+    public bool stop;
 
     private Animator animator;
 
@@ -33,6 +38,9 @@ public class DialogueManager : MonoBehaviour
     private Queue<Choice> choice4;
     public Queue<int> numChoices;
 
+    //Temp
+    private GameObject tempParent;
+
     private void Awake() {
         if(Instance == null) {
             Instance = this;
@@ -50,7 +58,15 @@ public class DialogueManager : MonoBehaviour
         numChoices = new Queue<int>();
     }
 
+    void Update() {
+        diceRoll = DiceData.diceRoll;
+        stop = DiceData.stop;
+    }
+
     public void StartDialogue(GameObject parent, Dialogue dialogue, Choice[] choice = null) {
+        //temp
+        tempParent = parent;
+
         //Disable Main UI
         MainUI.SetActive(false);
 
@@ -75,6 +91,8 @@ public class DialogueManager : MonoBehaviour
         
         nextBtn = parent.transform.Find("Canvas").gameObject.transform.Find("DialogueBox").gameObject.transform.Find("Border").gameObject.transform.Find("Base").gameObject.transform.Find("Button").gameObject;
         nameText.text = dialogue.names;
+
+        nextBtn.SetActive(true);
 
         //Clear queue
         sentences.Clear();
@@ -184,6 +202,9 @@ public class DialogueManager : MonoBehaviour
         Choice tempchoice1 = choice1.Dequeue();
         Choice tempchoice2 = choice2.Dequeue();
 
+        choiceBox1.GetComponent<ChoiceController>().UpdateChoice(tempchoice1.choiceStat, tempchoice1.choiceStatReq, tempchoice1.sentences);
+        choiceBox2.GetComponent<ChoiceController>().UpdateChoice(tempchoice2.choiceStat, tempchoice2.choiceStatReq, tempchoice2.sentences);
+
         StopAllCoroutines();
         StartCoroutine(TypeChoice(tempchoice1,tempchoice2));
     }
@@ -196,6 +217,10 @@ public class DialogueManager : MonoBehaviour
         Choice tempchoice1 = choice1.Dequeue();
         Choice tempchoice2 = choice2.Dequeue();
         Choice tempchoice3 = choice3.Dequeue();
+
+        choiceBox1.GetComponent<ChoiceController>().UpdateChoice(tempchoice1.choiceStat, tempchoice1.choiceStatReq, tempchoice1.sentences);
+        choiceBox2.GetComponent<ChoiceController>().UpdateChoice(tempchoice2.choiceStat, tempchoice2.choiceStatReq, tempchoice2.sentences);
+        choiceBox3.GetComponent<ChoiceController>().UpdateChoice(tempchoice3.choiceStat, tempchoice3.choiceStatReq, tempchoice3.sentences);
 
         StopAllCoroutines();
         StartCoroutine(TypeChoice3(tempchoice1,tempchoice2,tempchoice3));
@@ -211,6 +236,11 @@ public class DialogueManager : MonoBehaviour
         Choice tempchoice2 = choice2.Dequeue();
         Choice tempchoice3 = choice3.Dequeue();
         Choice tempchoice4 = choice4.Dequeue();
+
+        choiceBox1.GetComponent<ChoiceController>().UpdateChoice(tempchoice1.choiceStat, tempchoice1.choiceStatReq, tempchoice1.sentences);
+        choiceBox2.GetComponent<ChoiceController>().UpdateChoice(tempchoice2.choiceStat, tempchoice2.choiceStatReq, tempchoice2.sentences);
+        choiceBox3.GetComponent<ChoiceController>().UpdateChoice(tempchoice3.choiceStat, tempchoice3.choiceStatReq, tempchoice3.sentences);
+        choiceBox4.GetComponent<ChoiceController>().UpdateChoice(tempchoice4.choiceStat, tempchoice4.choiceStatReq, tempchoice4.sentences);
 
         StopAllCoroutines();
         StartCoroutine(TypeChoice4(tempchoice1,tempchoice2,tempchoice3,tempchoice4));
@@ -401,7 +431,29 @@ public class DialogueManager : MonoBehaviour
 
         MainUI.SetActive(true);
         bg.SetActive(false);
-        // dgBox.SetActive(false);
+        dgBox.SetActive(false);
+        choiceBox1.SetActive(false);
+        choiceBox2.SetActive(false);
+        choiceBox3.SetActive(false);
+        choiceBox4.SetActive(false);
+    }
+
+    public void EnableDice() {
+        Debug.Log("Loading Dice Roll Scene");
+        Canvas canvas = tempParent.transform.Find("Canvas").GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+
+        SceneManager.LoadSceneAsync("DiceRoll",LoadSceneMode.Additive);
+    }
+
+    public void DisableDice() {
+        Debug.Log("Unload Dice");
+        Canvas canvas = tempParent.transform.Find("Canvas").GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+        MainUI.SetActive(true);
+        bg.SetActive(false);
+        dgBox.SetActive(false);
         choiceBox1.SetActive(false);
         choiceBox2.SetActive(false);
         choiceBox3.SetActive(false);

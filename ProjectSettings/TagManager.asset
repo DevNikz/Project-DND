@@ -12,7 +12,7 @@ TagManager:
   - Water
   - UI
   - Minimap
-  - 
+  - Dice
   - 
   - 
   - 
@@ -40,4 +40,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Dice
+    uniqueID: 68893289
+    locked: 0
+  - name: UI
+    uniqueID: 4060021383
     locked: 0
