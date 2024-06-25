@@ -12,6 +12,12 @@ EditorBuildSettings:
     path: Assets/Scenes/DiceRoll.unity
     guid: 96b5c0a7e273be84ca056978f85a54ee
   m_configObjects:
+    com.unity.adaptiveperformance.google.android.provider_settings: {fileID: 11400000,
+      guid: 5a14cbca607839f4a8f887ca34e15b96, type: 2}
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 2270f39c741343444a35c68474c4d6be,
+      type: 2}
+    com.unity.adaptiveperformance.samsung.android.provider_settings: {fileID: 11400000,
+      guid: fef86bcf0e46e7b449efbc285b499e18, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000,
       guid: 128e068b31c30594288d57bb4238eef6, type: 2}
   m_UseUCBPForAssetBundles: 0

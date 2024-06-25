@@ -23960,7 +23960,7 @@ MonoBehaviour:
   Intelligence: 20
   Wisdom: 20
   Charisma: 0
-  EnableMenu: 0
+  EnableMenu: 1
   alwaysSucceed: 0
   alwaysFail: 0
   StoryProgression: 0
