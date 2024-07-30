@@ -4,11 +4,26 @@ using UnityEngine;
 
 public class CollisionController : MonoBehaviour
 {
-    public Collider dialogueOther;
+    [Header("Area")]
+    public GameObject areaOther;
+    public GameObject returnAreaOther;
+
+    [Header("Dialogue")]
+    public GameObject dialogueOther;
 
     void OnTriggerStay(Collider other) {
+        //Area
+        if(other.CompareTag("Area")) {
+            areaOther = other.gameObject;
+        }
+
+        if(other.CompareTag("ReturnArea")) {
+            returnAreaOther = other.gameObject;
+        }
+
+        //Dialogue
         if(other.name == "DialogueInteract") {
-            dialogueOther = other;
+            dialogueOther = other.gameObject;
             other.transform.Find("Context").gameObject.SetActive(true);
         }
 
@@ -21,14 +36,28 @@ public class CollisionController : MonoBehaviour
     }
 
     void OnTriggerExit(Collider other) {
-        dialogueOther = null;
-        other.transform.Find("Context").gameObject.SetActive(false);
+        if(dialogueOther != null) dialogueOther = null;
+        if(areaOther != null) areaOther = null;
+        if(returnAreaOther != null) returnAreaOther = null;
+
+        if(other.transform.Find("Context") != null) other.transform.Find("Context").gameObject.SetActive(false);
     }
 
     public void PrepDialogueInteract() {
         if(dialogueOther != null) {
             dialogueOther.GetComponent<DialogueTrigger>().InteractDialogue();
         }
-        else Debug.Log("DialogueTrigger not found.");   
+    }
+
+    public void EnterArea() {
+        if(areaOther != null) {
+            areaOther.GetComponent<AreaController>().Teleport();
+        }
+    }
+
+    public void ReturnArea() {
+        if(returnAreaOther != null) {
+            returnAreaOther.GetComponent<AreaController>().Return();
+        }
     }
 }
