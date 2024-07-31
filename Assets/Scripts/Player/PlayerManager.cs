@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -8,20 +8,26 @@ public class PlayerManager : MonoBehaviour
 
     public static PlayerManager Instance;
 
+    //Player 
+    [SerializeField] private GameObject player;
+
     //Profile
     [Header("Profile")]
-    [SerializeField] private string Name;
-    [SerializeField][Range(0,10)] private int Level;
-    [SerializeField] private EntityClass Class;
-    [SerializeField] private EntityRace Race;
+    [SerializeField] public string Name;
+    [SerializeField][Range(0,10)] public int Level;
+    [SerializeField] public EntityClass Class;
+    [SerializeField] public EntityRace Race;
 
     [Header("Stats")]
-    [SerializeField][Range(0,20)] private int Strength;
-    [SerializeField][Range(0,20)] private int Dexterity;
-    [SerializeField][Range(0,20)] private int Constitution;
-    [SerializeField][Range(0,20)] private int Intelligence;
-    [SerializeField][Range(0,20)] private int Wisdom;
-    [SerializeField][Range(0,20)] private int Charisma;
+    [SerializeField][Range(0,20)] public int Strength;
+    [SerializeField][Range(0,20)] public int Dexterity;
+    [SerializeField][Range(0,20)] public int Constitution;
+    [SerializeField][Range(0,20)] public int Intelligence;
+    [SerializeField][Range(0,20)] public int Wisdom;
+    [SerializeField][Range(0,20)] public int Charisma;
+
+    [Header("Location")]
+    [SerializeField] public Vector3 CurrentPosition;
 
     [Header("DevMenu")]
     [SerializeField] public bool EnableMenu;
@@ -35,6 +41,13 @@ public class PlayerManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         else Destroy(gameObject);
+
+        player = GameObject.Find("/PlayerContainer");
+
+        string path = Application.persistentDataPath + "/player.kek";
+        if(File.Exists(path)) {
+            LoadPlayer();
+        }
     }
 
     
@@ -58,6 +71,9 @@ public class PlayerManager : MonoBehaviour
         PlayerData.Intelligence = Intelligence;
         PlayerData.Wisdom = Wisdom;
         PlayerData.Charisma = Charisma;
+
+        CurrentPosition = player.transform.position;
+        PlayerData.CurrentPosition = CurrentPosition;
     }
 
     void UpdateDebugMenu() {
@@ -81,5 +97,28 @@ public class PlayerManager : MonoBehaviour
     public void AlwaysFail() {
         alwaysFail = true;
         alwaysSucceed = false;
+    }
+
+    [ContextMenu("Save")]
+    public void SavePlayer() {
+        SaveSystem.SavePlayer(this);
+    }
+
+    [ContextMenu("Load")]
+    public void LoadPlayer() {
+        PlayerStuffs data = SaveSystem.LoadPlayer();
+        Level = data.Level;
+        Name = data.Name;
+        Class = (EntityClass) System.Enum.Parse(typeof(EntityClass), data.Class);
+        Race = (EntityRace) System.Enum.Parse(typeof(EntityRace), data.Race);
+        Strength = data.Strength;
+        Dexterity = data.Dexterity;
+        Constitution = data.Constitution;
+        Intelligence = data.Intelligence;
+        Wisdom = data.Wisdom;
+        Charisma = data.Charisma;
+
+        player.transform.position = new Vector3(data.position[0], data.position[1], data.position[2]);
+        CurrentPosition = player.transform.position;
     }
 }

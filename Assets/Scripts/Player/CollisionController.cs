@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CollisionController : MonoBehaviour
 {
     [Header("Area")]
-    public GameObject areaOther;
-    public GameObject returnAreaOther;
+    public GameObject area;
+    public GameObject returnArea;
+    public GameObject returnAreaSided;
+    public GameObject save;
 
     [Header("Dialogue")]
     public GameObject dialogueOther;
@@ -14,11 +17,19 @@ public class CollisionController : MonoBehaviour
     void OnTriggerStay(Collider other) {
         //Area
         if(other.CompareTag("Area")) {
-            areaOther = other.gameObject;
+            area = other.gameObject;
         }
 
         if(other.CompareTag("ReturnArea")) {
-            returnAreaOther = other.gameObject;
+            returnArea = other.gameObject;
+        }
+
+        if(other.CompareTag("ReturnAreaSided")) {
+            returnAreaSided = other.gameObject;
+        }
+
+        if(other.CompareTag("Save")) {
+            save = other.gameObject;
         }
 
         //Dialogue
@@ -37,8 +48,10 @@ public class CollisionController : MonoBehaviour
 
     void OnTriggerExit(Collider other) {
         if(dialogueOther != null) dialogueOther = null;
-        if(areaOther != null) areaOther = null;
-        if(returnAreaOther != null) returnAreaOther = null;
+        if(area != null) area = null;
+        if(returnArea != null) returnArea = null;
+        if(returnAreaSided != null) returnAreaSided = null;
+        if(save != null) save = null;
 
         if(other.transform.Find("Context") != null) other.transform.Find("Context").gameObject.SetActive(false);
     }
@@ -50,14 +63,23 @@ public class CollisionController : MonoBehaviour
     }
 
     public void EnterArea() {
-        if(areaOther != null) {
-            areaOther.GetComponent<AreaController>().Teleport();
+        if(area != null) {
+            area.GetComponent<AreaController>().Teleport();
         }
     }
 
     public void ReturnArea() {
-        if(returnAreaOther != null) {
-            returnAreaOther.GetComponent<AreaController>().Return();
+        if(returnArea != null) {
+            returnArea.GetComponent<AreaController>().Return();
+        }
+        if(returnAreaSided != null) {
+            returnAreaSided.GetComponent<AreaController>().ReturnSided();
+        }
+    }
+
+    public void Save() {
+        if(save != null) {
+            PlayerManager.Instance.SavePlayer();
         }
     }
 }

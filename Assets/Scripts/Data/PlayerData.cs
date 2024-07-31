@@ -23,6 +23,9 @@ public static class PlayerData
 
     public static int Charisma { get; set; }
 
+    //Location
+    public static Vector3 CurrentPosition { get; set; }
+
     //Player Movement
     public static DirectionH directionH { get; set; }
     public static DirectionV directionV { get; set; }
