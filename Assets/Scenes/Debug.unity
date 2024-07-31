@@ -23315,6 +23315,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83da89805ba112247b59487600f43425, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  area: {fileID: 0}
+  returnArea: {fileID: 0}
+  returnAreaSided: {fileID: 0}
+  save: {fileID: 0}
   dialogueOther: {fileID: 0}
 --- !u!1001 &856300835
 PrefabInstance:
@@ -23950,6 +23954,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b65b21e45c3b12446b7b6fe13f8f0313, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
   Name: DevNiks
   Level: 10
   Class: 2
@@ -23960,6 +23965,7 @@ MonoBehaviour:
   Intelligence: 20
   Wisdom: 20
   Charisma: 0
+  CurrentPosition: {x: 0, y: 0, z: 0}
   EnableMenu: 1
   alwaysSucceed: 0
   alwaysFail: 0

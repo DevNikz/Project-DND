@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/ProjectDND.unity
-    guid: 82b019a5f4d4be34284efe198f2c1584
+    path: Assets/Scenes/Game.unity
+    guid: 384bbcc438953014a936c1a80a1290ae
   - enabled: 1
     path: Assets/Scenes/DiceRoll.unity
     guid: 96b5c0a7e273be84ca056978f85a54ee
