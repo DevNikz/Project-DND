@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Unity.VisualScripting;
@@ -14,9 +15,15 @@ public class PlayerManager : MonoBehaviour
     //Profile
     [Header("Profile")]
     [SerializeField] public string Name;
-    [SerializeField][Range(0,10)] public int Level;
+    [SerializeField][Range(1,20)] public int Level;
     [SerializeField] public EntityClass Class;
     [SerializeField] public EntityRace Race;
+
+    [Header("Basic Stats")] 
+    [SerializeField] public int Health;
+    public int CurrentHealth;
+    [SerializeField] public int Mana;
+    public int CurrentMana;
 
     [Header("Stats")]
     [SerializeField][Range(0,20)] public int Strength;
@@ -25,6 +32,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField][Range(0,20)] public int Intelligence;
     [SerializeField][Range(0,20)] public int Wisdom;
     [SerializeField][Range(0,20)] public int Charisma;
+
+    [Header("Skills")]
+    [SerializeField] public List<Skill> Skills;
 
     [Header("Location")]
     [SerializeField] public Vector3 CurrentPosition;
@@ -42,18 +52,23 @@ public class PlayerManager : MonoBehaviour
         }
         else Destroy(gameObject);
 
+        //GameObject
         player = GameObject.Find("/PlayerContainer");
 
+        //Save
         string path = Application.persistentDataPath + "/player.kek";
         if(File.Exists(path)) {
             LoadPlayer();
         }
-    }
+
+        UpdateBasicStats();
+        UpdateProfile();
+        UpdateStats();
+        UpdateSkills();
+    } 
 
     
     void Update() {
-        UpdateProfile();
-        UpdateStats();
         UpdateDebugMenu();
     }
 
@@ -65,6 +80,8 @@ public class PlayerManager : MonoBehaviour
     }
 
     void UpdateStats(){
+        ClassStats();
+
         PlayerData.Strength = Strength;
         PlayerData.Dexterity = Dexterity;
         PlayerData.Constitution = Constitution;
@@ -76,31 +93,56 @@ public class PlayerManager : MonoBehaviour
         PlayerData.CurrentPosition = CurrentPosition;
     }
 
-    void UpdateDebugMenu() {
-        if(EnableMenu) {
-            this.transform.Find("Debug").gameObject.SetActive(true);
+    void ClassStats() {
+        Strength = UtilityMisc.Strength(Class);
+        Dexterity = UtilityMisc.Dexterity(Class);
+        Constitution = UtilityMisc.Constitution(Class);
+        Intelligence = UtilityMisc.Intelligence(Class);
+        Wisdom = UtilityMisc.Wisdom(Class);
+        Charisma = UtilityMisc.Charisma(Class); 
+    }
+
+    void UpdateBasicStats() {
+        Health = 0;
+        Mana = 0;
+        for(int i = 0; i < Level; i++) {
+            Health += UtilityMisc.CalculateHealth(Class, i+1, Constitution); 
+            Mana += UtilityMisc.CalculateMana(Class, i+1, Intelligence);
+        }
+
+        PlayerData.MaxHealth = Health;
+        PlayerData.MaxMana = Mana;
+        CurrentHealth = Health;
+        CurrentMana = Mana;
+    }
+
+    void UpdateSkills() {
+        if(Skills.Count > 0) {
+            for(int i = 0; i < Skills.Count; i++) {
+                Skills[i].ActualModifier = UtilityMisc.CalculateModifier(Level, Skills[i].Modifier);
+            }
+        }
+    }
+
+    [ContextMenu("Level Up")]
+    public void UpdateLevel() {
+        if(Level >= 20) {
+            Debug.Log("Max Level Reached.");
+            Level = 20;
+            return;
         }
         else {
-            this.transform.Find("Debug").gameObject.SetActive(false);
-
-            //Disable Hacks
-            alwaysSucceed = false;
-            alwaysFail = false;
+            Level += 1;
+            UpdateBasicStats();
+            UpdateSkills();
         }
     }
 
-    public void AlwaysSucceed() {
-        alwaysSucceed = true;
-        alwaysFail = false;
-    }
-
-    public void AlwaysFail() {
-        alwaysFail = true;
-        alwaysSucceed = false;
-    }
-
+    //SaveManagement
     [ContextMenu("Save")]
     public void SavePlayer() {
+        UpdateProfile();
+        UpdateStats();
         SaveSystem.SavePlayer(this);
     }
 
@@ -120,5 +162,29 @@ public class PlayerManager : MonoBehaviour
 
         player.transform.position = new Vector3(data.position[0], data.position[1], data.position[2]);
         CurrentPosition = player.transform.position;
+    }
+
+    //Debug (Cheats)
+    void UpdateDebugMenu() {
+        if(EnableMenu) {
+            this.transform.Find("Debug").gameObject.SetActive(true);
+        }
+        else {
+            this.transform.Find("Debug").gameObject.SetActive(false);
+
+            //Disable Hacks
+            alwaysSucceed = false;
+            alwaysFail = false;
+        }
+    }
+    
+    public void AlwaysSucceed() {
+        alwaysSucceed = true;
+        alwaysFail = false;
+    }
+
+    public void AlwaysFail() {
+        alwaysFail = true;
+        alwaysSucceed = false;
     }
 }

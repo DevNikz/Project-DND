@@ -10,6 +10,10 @@ public static class PlayerData
     public static EntityClass Class { get; set; }
     public static EntityRace Race { get; set; }
 
+    //Basic Stats
+    public static int MaxHealth { get; set; }
+    public static int MaxMana { get; set; }
+
     //Stats
     public static int Strength { get; set; }
 
@@ -25,6 +29,9 @@ public static class PlayerData
 
     //Location
     public static Vector3 CurrentPosition { get; set; }
+
+    //Skills
+    public static List<Skill> Skills { get; set; }
 
     //Player Movement
     public static DirectionH directionH { get; set; }

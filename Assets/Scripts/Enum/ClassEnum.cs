@@ -1,7 +1,7 @@
 public enum EntityClass {
     NONE,
-    KNIGHT,
-    MAGE,
+    FIGHTER,
+    WIZARD,
     RANGER
 }
 

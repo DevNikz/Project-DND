@@ -44,6 +44,14 @@ public class CollisionController : MonoBehaviour
             other.GetComponent<DialogueTrigger>().TriggerDialogue();
             Destroy(other);
         }
+
+        //Combat
+        if(other.name == "CombatTrigger") {
+            this.gameObject.GetComponent<PlayerMovement>().joystick.input = Vector2.zero;
+            this.gameObject.GetComponent<PlayerMovement>().joystick.handle.anchoredPosition = Vector2.zero;
+            other.GetComponent<CombatTrigger>().TriggerCombat();
+            Destroy(other);
+        }
     }
 
     void OnTriggerExit(Collider other) {
