@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class CombatTrigger : MonoBehaviour
 {
+    public GameObject ParentArea;
     public List<Character> Characters;
     public List<Enemy> Enemies;
 
     void Start() {
+        ParentArea = this.transform.parent.transform.parent.gameObject;
         InitEnemies();
     }
 
@@ -26,11 +28,14 @@ public class CombatTrigger : MonoBehaviour
             }
         }
         else Debug.Log("Enemies Not Integrated?!");
+
+        CheckCount();
     }
 
+    [ContextMenu("TriggerCombat")]
     public void TriggerCombat() {
-        CheckCount();
-        CombatManager.Instance.StartCombat(this.gameObject, Characters, Enemies);
+        // CheckCount();
+        CombatManager.Instance.StartCombat(ParentArea, Characters, Enemies);
     }
 
     void CheckCount() {
@@ -63,9 +68,12 @@ public class CombatTrigger : MonoBehaviour
         Character charTemp = new Character
         {
             Name = PlayerManager.Instance.Name,
+            Class = PlayerManager.Instance.Class,
             Level = PlayerManager.Instance.Level,
             Health = PlayerManager.Instance.Health,
+            CurrentHealth = PlayerManager.Instance.Health,
             Mana = PlayerManager.Instance.Mana,
+            CurrentMana = PlayerManager.Instance.Mana,
             Skills = PlayerManager.Instance.Skills
         };
 
@@ -76,35 +84,15 @@ public class CombatTrigger : MonoBehaviour
         Character charTemp = new Character
         {
             Name = CompanionManager.Instance.Companions[index].Name.ToString(),
+            Class = CompanionManager.Instance.Companions[index].Class,
             Level = CompanionManager.Instance.Companions[index].Level,
             Health = CompanionManager.Instance.Companions[index].Health,
+            CurrentHealth = CompanionManager.Instance.Companions[index].CurrentHealth,
             Mana = CompanionManager.Instance.Companions[index].Mana,
+            CurrentMana = CompanionManager.Instance.Companions[index].Mana,
             Skills = CompanionManager.Instance.Companions[index].Skills
         };
 
         return charTemp;
     }
-
-
-    // void GetPlayerStats() {
-    //     Characters[0].Name = PlayerManager.Instance.Name;
-    //     Characters[0].Level = PlayerManager.Instance.Level;
-    //     Characters[0].Health = PlayerManager.Instance.Health;
-    //     Characters[0].Mana = PlayerManager.Instance.Mana;
-    //     Characters[0].Skills = PlayerManager.Instance.Skills;
-    // }
-
-    // void GetCompanionStats() {
-    //     if(CompanionManager.Instance.Companions.Count > 0) {
-    //         for(int i = 0; i < CompanionManager.Instance.Companions.Count; i++) {
-    //             Characters[i+1].Name = CompanionManager.Instance.Companions[i].Name.ToString();
-    //             Characters[i+1].Level = CompanionManager.Instance.Companions[i].Level;
-    //             Characters[i+1].Health = CompanionManager.Instance.Companions[i].Health;
-    //             Characters[i+1].Mana = CompanionManager.Instance.Companions[i].Mana;
-    //             Characters[i+1].Skills = CompanionManager.Instance.Companions[i].Skills;
-    //         }
-    //     } 
-    //     else Debug.Log("No Companions Detected");
-    // }
-
 }

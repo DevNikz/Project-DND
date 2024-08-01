@@ -1,7 +1,7 @@
 public enum EnemyType {
-    Soldier,
-    Bandit,
-    Orc,
+    Slime,
+    DarkSlime,
     Goblin,
+    Halfling,
     Boss
 }

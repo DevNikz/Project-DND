@@ -1,8 +1,8 @@
 public enum EntityClass {
     NONE,
-    FIGHTER,
-    WIZARD,
-    RANGER
+    Fighter,
+    Wizard,
+    Ranger
 }
 
 public enum EntityRace {

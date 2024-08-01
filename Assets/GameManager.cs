@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
         PlayerMP = Player.transform.Find("HUD/Mana").GetComponent<Slider>();
         CompanionMP1 = Companion1.transform.Find("HUD/Mana").GetComponent<Slider>();
         CompanionMP2 = Companion2.transform.Find("HUD/Mana").GetComponent<Slider>();
-
     }
 
     void Start() {
@@ -77,7 +76,6 @@ public class GameManager : MonoBehaviour
             Debug.Log("Has Companions");
             UpdateCompanionUI(CompanionManager.Instance.GetCount());
         }
-        //if(CompanionManager.Instance.Companions.Count > 0) UpdateCompanionUI(CompanionManager.Instance.Companions.Count);
     }
 
     public void UpdatePlayerUI() {
@@ -85,11 +83,16 @@ public class GameManager : MonoBehaviour
         PlayerText.text = $"{PlayerManager.Instance.Name} | Level {PlayerManager.Instance.Level}";
 
         //Update Player Icon
-        PlayerIcon.sprite = Resources.Load<Sprite>("Characters/Player");
+        PlayerIcon.sprite = Resources.Load<Sprite>($"Characters/{PlayerManager.Instance.Class}Player");
 
         //Update Stats
-        PlayerHP.value = UtilityMisc.ConvertSliderVal(PlayerManager.Instance.CurrentHealth, PlayerManager.Instance.Health);
-        PlayerMP.value = UtilityMisc.ConvertSliderVal(PlayerManager.Instance.CurrentMana, PlayerManager.Instance.Mana);
+        PlayerHP.wholeNumbers = true;
+        PlayerHP.maxValue = PlayerManager.Instance.Health;
+        PlayerHP.value = PlayerManager.Instance.CurrentHealth;
+
+        PlayerMP.wholeNumbers = true;
+        PlayerMP.maxValue = PlayerManager.Instance.Mana;
+        PlayerMP.value = PlayerManager.Instance.CurrentMana;
     }
 
     public void UpdateCompanionUI(int count) {
@@ -99,15 +102,27 @@ public class GameManager : MonoBehaviour
                     Companion1.SetActive(true);
                     CompanionText1.text = $"{CompanionManager.Instance.Companions[i].Name} | Level {CompanionManager.Instance.Companions[i].Level}";
                     CompanionIcon1.sprite = Resources.Load<Sprite>($"Characters/{CompanionManager.Instance.Companions[i].Name}");
-                    CompanionHP1.value = UtilityMisc.ConvertSliderVal(CompanionManager.Instance.Companions[i].CurrentHealth, CompanionManager.Instance.Companions[i].Health);
-                    CompanionMP1.value = UtilityMisc.ConvertSliderVal(CompanionManager.Instance.Companions[i].CurrentMana, CompanionManager.Instance.Companions[i].Mana);
+
+                    CompanionHP1.wholeNumbers = true;
+                    CompanionHP1.maxValue = CompanionManager.Instance.Companions[i].Health;
+                    CompanionHP1.value = CompanionManager.Instance.Companions[i].CurrentHealth;
+
+                    CompanionMP1.wholeNumbers = true;
+                    CompanionMP1.maxValue = CompanionManager.Instance.Companions[i].Mana;
+                    CompanionMP1.value = CompanionManager.Instance.Companions[i].CurrentMana;
                     break;
                 case 1:
                     Companion2.SetActive(true);
                     CompanionText2.text = $"{CompanionManager.Instance.Companions[i].Name} | Level {CompanionManager.Instance.Companions[i].Level}";
                     CompanionIcon2.sprite = Resources.Load<Sprite>($"Characters/{CompanionManager.Instance.Companions[i].Name}");
-                    CompanionHP2.value = UtilityMisc.ConvertSliderVal(CompanionManager.Instance.Companions[i].CurrentHealth, CompanionManager.Instance.Companions[i].Health);
-                    CompanionMP2.value = UtilityMisc.ConvertSliderVal(CompanionManager.Instance.Companions[i].CurrentMana, CompanionManager.Instance.Companions[i].Mana);
+
+                    CompanionHP2.wholeNumbers = true;
+                    CompanionHP2.maxValue = CompanionManager.Instance.Companions[i].Health;
+                    CompanionHP2.value = CompanionManager.Instance.Companions[i].CurrentHealth;
+
+                    CompanionMP2.wholeNumbers = true;
+                    CompanionMP2.maxValue = CompanionManager.Instance.Companions[i].Mana;
+                    CompanionMP2.value = CompanionManager.Instance.Companions[i].CurrentMana;
                     break;
             }
         }

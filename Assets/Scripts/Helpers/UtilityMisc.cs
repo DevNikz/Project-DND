@@ -1,3 +1,5 @@
+using System;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -7,26 +9,26 @@ public class UtilityMisc : MonoBehaviour{
         switch(Level) {
             case 1:
                 switch(entityClass) {
-                    case EntityClass.WIZARD:
+                    case EntityClass.Wizard:
                         Health = 6 + Constitution;
                         break;
-                    case EntityClass.FIGHTER:
+                    case EntityClass.Fighter:
                         Health = 10 + Constitution;
                         break;
-                    case EntityClass.RANGER:
+                    case EntityClass.Ranger:
                         Health = 10 + Constitution;
                         break;
                 }
                 break;
             default:
                 switch(entityClass) {
-                    case EntityClass.WIZARD:
+                    case EntityClass.Wizard:
                         Health = 4 + Constitution;
                         break;
-                    case EntityClass.FIGHTER:
+                    case EntityClass.Fighter:
                         Health = 6 + Constitution;
                         break;
-                    case EntityClass.RANGER:
+                    case EntityClass.Ranger:
                         Health = 6 + Constitution;
                         break;
                 }
@@ -45,26 +47,26 @@ public class UtilityMisc : MonoBehaviour{
         switch(Level) {
             case 1:
                 switch(entityClass) {
-                    case EntityClass.WIZARD:
+                    case EntityClass.Wizard:
                         Mana = 10 + Intelligence;
                         break;
-                    case EntityClass.FIGHTER:
+                    case EntityClass.Fighter:
                         Mana = 6 + Intelligence;
                         break;
-                    case EntityClass.RANGER:
+                    case EntityClass.Ranger:
                         Mana = 6 + Intelligence;
                         break;
                 }
                 break;
             default:
                 switch(entityClass) {
-                    case EntityClass.WIZARD:
+                    case EntityClass.Wizard:
                         Mana = 6 + Intelligence;
                         break;
-                    case EntityClass.FIGHTER:
+                    case EntityClass.Fighter:
                         Mana = 4 + Intelligence;
                         break;
-                    case EntityClass.RANGER:
+                    case EntityClass.Ranger:
                         Mana = 4 + Intelligence;
                         break;
                 }
@@ -77,13 +79,13 @@ public class UtilityMisc : MonoBehaviour{
     public static int Strength(EntityClass entityClass) {
         int Strength = 0;
         switch(entityClass) {
-            case EntityClass.FIGHTER:
+            case EntityClass.Fighter:
                 Strength = 15;
                 break;
-            case EntityClass.RANGER:
+            case EntityClass.Ranger:
                 Strength = 9;
                 break;
-            case EntityClass.WIZARD:
+            case EntityClass.Wizard:
                 Strength = 8;
                 break;
         }
@@ -93,13 +95,13 @@ public class UtilityMisc : MonoBehaviour{
     public static int Dexterity(EntityClass entityClass) {
         int Dexterity = 0;
         switch(entityClass) {
-            case EntityClass.FIGHTER:
+            case EntityClass.Fighter:
                 Dexterity = 10;
                 break;
-            case EntityClass.RANGER:
+            case EntityClass.Ranger:
                 Dexterity = 15;
                 break;
-            case EntityClass.WIZARD:
+            case EntityClass.Wizard:
                 Dexterity = 14;
                 break;
         }
@@ -109,13 +111,13 @@ public class UtilityMisc : MonoBehaviour{
     public static int Constitution(EntityClass entityClass) {
         int Constitution = 0;
         switch(entityClass) {
-            case EntityClass.FIGHTER:
+            case EntityClass.Fighter:
                 Constitution = 15;
                 break;
-            case EntityClass.RANGER:
+            case EntityClass.Ranger:
                 Constitution = 13;
                 break;
-            case EntityClass.WIZARD:
+            case EntityClass.Wizard:
                 Constitution = 14;
                 break;
         }
@@ -125,13 +127,13 @@ public class UtilityMisc : MonoBehaviour{
     public static int Intelligence(EntityClass entityClass) {
         int Intelligence = 0;
         switch(entityClass) {
-            case EntityClass.FIGHTER:
+            case EntityClass.Fighter:
                 Intelligence = 10;
                 break;
-            case EntityClass.RANGER:
+            case EntityClass.Ranger:
                 Intelligence = 11;
                 break;
-            case EntityClass.WIZARD:
+            case EntityClass.Wizard:
                 Intelligence = 15;
                 break;
         }
@@ -141,13 +143,13 @@ public class UtilityMisc : MonoBehaviour{
     public static int Wisdom(EntityClass entityClass) {
         int Wisdom = 0;
         switch(entityClass) {
-            case EntityClass.FIGHTER:
+            case EntityClass.Fighter:
                 Wisdom = 12;
                 break;
-            case EntityClass.RANGER:
+            case EntityClass.Ranger:
                 Wisdom = 15;
                 break;
-            case EntityClass.WIZARD:
+            case EntityClass.Wizard:
                 Wisdom = 12;
                 break;
         }
@@ -157,13 +159,13 @@ public class UtilityMisc : MonoBehaviour{
     public static int Charisma(EntityClass entityClass) {
         int Charisma = 0;
         switch(entityClass) {
-            case EntityClass.FIGHTER:
+            case EntityClass.Fighter:
                 Charisma = 9;
                 break;
-            case EntityClass.RANGER:
+            case EntityClass.Ranger:
                 Charisma = 8;
                 break;
-            case EntityClass.WIZARD:
+            case EntityClass.Wizard:
                 Charisma = 8;
                 break;
         }
@@ -182,4 +184,11 @@ public class UtilityMisc : MonoBehaviour{
     public static float ConvertSliderVal(int current, int max) {
         return current / max;
     }
+
+    // public static void AnimateText(TextMeshProUGUI txtMesh, string sentence) {
+    //     txtMesh.text = "";
+    //     foreach(char letter in sentence.ToCharArray()) {
+    //         txtMesh.text += letter;
+    //     }
+    // }
 }
