@@ -1564,6 +1564,18 @@ MonoBehaviour:
     ActualModifier: 0
     Requirement: 2
     Value: 2
+  - Category: 0
+    Type: 8
+    Modifier: 6
+    ActualModifier: 0
+    Requirement: 2
+    Value: 3
+  - Category: 0
+    Type: 9
+    Modifier: 4
+    ActualModifier: 0
+    Requirement: 2
+    Value: 1
   CurrentPosition: {x: 0, y: 0, z: 0}
   EnableMenu: 0
   alwaysSucceed: 0
@@ -5274,7 +5286,25 @@ MonoBehaviour:
     CurrentMana: 0
     Constitution: 0
     Intelligence: 0
-    Skills: []
+    Skills:
+    - Category: 1
+      Type: 11
+      Modifier: 8
+      ActualModifier: 0
+      Requirement: 2
+      Value: 3
+    - Category: 1
+      Type: 13
+      Modifier: 7
+      ActualModifier: 0
+      Requirement: 2
+      Value: 3
+    - Category: 0
+      Type: 12
+      Modifier: 6
+      ActualModifier: 0
+      Requirement: 2
+      Value: 4
   - Name: 1
     Class: 1
     Level: 1
@@ -5284,7 +5314,19 @@ MonoBehaviour:
     CurrentMana: 0
     Constitution: 0
     Intelligence: 0
-    Skills: []
+    Skills:
+    - Category: 1
+      Type: 5
+      Modifier: 7
+      ActualModifier: 0
+      Requirement: 2
+      Value: 2
+    - Category: 1
+      Type: 6
+      Modifier: 5
+      ActualModifier: 0
+      Requirement: 2
+      Value: 1
 --- !u!1001 &158350328
 PrefabInstance:
   m_ObjectHideFlags: 0
