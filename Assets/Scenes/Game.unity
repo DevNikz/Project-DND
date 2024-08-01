@@ -4156,7 +4156,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 108755931}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -34716,7 +34716,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 965680180}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -37869,14 +37869,14 @@ GameObject:
   - component: {fileID: 1030036548}
   - component: {fileID: 1030036547}
   - component: {fileID: 1030036546}
-  - component: {fileID: 1030036545}
+  - component: {fileID: 1030036549}
   m_Layer: 0
   m_Name: Target1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1030036544
 RectTransform:
   m_ObjectHideFlags: 0
@@ -37897,19 +37897,6 @@ RectTransform:
   m_AnchoredPosition: {x: 175, y: -50}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1030036545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1030036543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a864fcb2ab65f6440be5c74119b8cfb6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  index: -1
 --- !u!114 &1030036546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37954,7 +37941,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1030036545}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SkillController, Assembly-CSharp
         m_MethodName: TransferIndex
         m_Mode: 1
@@ -38004,6 +37991,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1030036543}
   m_CullTransparentMesh: 1
+--- !u!114 &1030036549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030036543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818ed30c731ed424092653162067e608, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetIndex: 1
 --- !u!1 &1030827734
 GameObject:
   m_ObjectHideFlags: 0
@@ -42421,14 +42421,14 @@ GameObject:
   - component: {fileID: 1166758498}
   - component: {fileID: 1166758497}
   - component: {fileID: 1166758496}
-  - component: {fileID: 1166758495}
+  - component: {fileID: 1166758499}
   m_Layer: 0
   m_Name: Target2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1166758494
 RectTransform:
   m_ObjectHideFlags: 0
@@ -42449,19 +42449,6 @@ RectTransform:
   m_AnchoredPosition: {x: 260, y: -50}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1166758495
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1166758493}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a864fcb2ab65f6440be5c74119b8cfb6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  index: -1
 --- !u!114 &1166758496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42506,7 +42493,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1166758495}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SkillController, Assembly-CSharp
         m_MethodName: TransferIndex
         m_Mode: 1
@@ -42556,6 +42543,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1166758493}
   m_CullTransparentMesh: 1
+--- !u!114 &1166758499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166758493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818ed30c731ed424092653162067e608, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetIndex: 2
 --- !u!1 &1167744730 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -239027048197897471, guid: 18442b60d5c267c4d86156205bf2f452,
@@ -53654,7 +53654,8 @@ MonoBehaviour:
   ParentArea: {fileID: 0}
   Characters: []
   Enemies:
-  - Name: 2
+  - currentState: 0
+    Name: 2
     Class: 1
     Level: 1
     Health: 0
@@ -63337,14 +63338,14 @@ GameObject:
   - component: {fileID: 1742048100}
   - component: {fileID: 1742048099}
   - component: {fileID: 1742048098}
-  - component: {fileID: 1742048097}
+  - component: {fileID: 1742048101}
   m_Layer: 0
   m_Name: Target0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1742048096
 RectTransform:
   m_ObjectHideFlags: 0
@@ -63365,19 +63366,6 @@ RectTransform:
   m_AnchoredPosition: {x: 90, y: -50}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1742048097
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1742048095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a864fcb2ab65f6440be5c74119b8cfb6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  index: -1
 --- !u!114 &1742048098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63422,7 +63410,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1742048097}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SkillController, Assembly-CSharp
         m_MethodName: TransferIndex
         m_Mode: 1
@@ -63472,6 +63460,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1742048095}
   m_CullTransparentMesh: 1
+--- !u!114 &1742048101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1742048095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818ed30c731ed424092653162067e608, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetIndex: 0
 --- !u!1001 &1747365519
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -75709,7 +75710,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2094722084}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0

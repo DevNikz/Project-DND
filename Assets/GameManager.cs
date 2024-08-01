@@ -73,7 +73,6 @@ public class GameManager : MonoBehaviour
     public void UpdateUI() {
         UpdatePlayerUI();
         if(CompanionManager.Instance.GetCount() > 0) {
-            Debug.Log("Has Companions");
             UpdateCompanionUI(CompanionManager.Instance.GetCount());
         }
     }

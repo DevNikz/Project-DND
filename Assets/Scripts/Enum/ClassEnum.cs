@@ -14,3 +14,8 @@ public enum EntityRace {
     ABYSSAL,
     ALIEN
 }
+
+public enum CharacterState {
+    Alive,
+    Dead
+}

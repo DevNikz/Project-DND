@@ -4,6 +4,7 @@ using UnityEngine;
 
 [Serializable]
 public class Enemy {
+    public CharacterState currentState;
     public EnemyType Name;
     public EntityClass Class;
     [Range(1,20)] public int Level;

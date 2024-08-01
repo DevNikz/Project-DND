@@ -31,7 +31,7 @@ public class CombatManager : MonoBehaviour {
     public int TargetIndex;
 
 
-    public enum CombatState { NONE, START, PLAYERTURN, COMPANIONTURN1, COMPANIONTURN2, ENEMYTURN, WIN, LOST }
+    public enum CombatState { NONE, START, PLAYERTURN, COMPANIONTURN1, COMPANIONTURN2, ENEMYTURN0, ENEMYTURN1, ENEMYTURN2, WIN, LOST }
 
     void Awake() {
         if(Instance == null) {
@@ -64,7 +64,7 @@ public class CombatManager : MonoBehaviour {
         PlayerTurn();
     }
 
-
+    //Setup
     void SetupArea() {
         //Disable Main Camera
         Camera.SetActive(false);
@@ -85,7 +85,6 @@ public class CombatManager : MonoBehaviour {
         SideButtons = CurrentBattleUI.transform.Find("Main/SideButtons").gameObject;
         SkillButtons = CurrentBattleUI.transform.Find("Main/Skills").gameObject;
         TargetButtons = CurrentBattleUI.transform.Find("Main/Targets").gameObject;
-        //ItemButtons = CurrentBattleUI.transform.Find("Main/Items").gameObject;
         UseButton = SideButtons.transform.Find("Use").gameObject;
 
         MainButtons.SetActive(true);
@@ -95,7 +94,6 @@ public class CombatManager : MonoBehaviour {
 
         //Set Unit
         for(int i = 0; i < refCharacters.Count; i++) {
-            Debug.Log(refCharacters[i].Name);
             switch(i) {
                 case 0: // Player
                     //Set Sprite
@@ -136,6 +134,7 @@ public class CombatManager : MonoBehaviour {
         
     }
 
+    //Start | Step 1
     void PlayerTurn() {
         string text = "Choose An Action";
         StartCoroutine(TypeSentence(text));
@@ -143,6 +142,232 @@ public class CombatManager : MonoBehaviour {
         combatState = CombatState.PLAYERTURN;
     }
 
+    void FriendlyTurn() {
+        string text = "Choose An Action";
+        StartCoroutine(TypeSentence(text));
+    }
+
+    void EnemyTurn() {
+        SetupEnemyAttack();
+    }
+
+    void SetupEnemyAttack() {
+        int skillIndex, targetIndex;
+        switch(combatState) {
+            case CombatState.ENEMYTURN0:    
+                //Random Skill
+                skillIndex = Random.Range(0, refEnemies[0].Skills.Count-1);
+
+                //Random Target if Skill is Single Category
+                if(refEnemies[0].Skills[skillIndex].Category == SkillCategory.Single) {
+                    if(CheckType(refEnemies[0].Skills[skillIndex].Type)) targetIndex = SetupEnemyTarget();
+                    else targetIndex = SetupFriendlyTarget();
+                }
+                else targetIndex = -1;
+
+                //Init Skill
+                StartCoroutine(EnemySkill(skillIndex, targetIndex));
+                break;
+            case CombatState.ENEMYTURN1:
+                //Random Skill
+                skillIndex = Random.Range(0, refEnemies[1].Skills.Count-1);
+
+                //Random Target if Skill is Single Category
+                if(refEnemies[1].Skills[skillIndex].Category == SkillCategory.Single) {
+                    if(CheckType(refEnemies[1].Skills[skillIndex].Type)) targetIndex = SetupEnemyTarget();
+                    else targetIndex = SetupFriendlyTarget();
+                }
+                else targetIndex = -1;
+
+                //Init Skill
+                StartCoroutine(EnemySkill(skillIndex, targetIndex));
+                break;
+            case CombatState.ENEMYTURN2:
+                //Random Skill
+                skillIndex = Random.Range(0, refEnemies[2].Skills.Count-1);
+
+                //Random Target if Skill is Single Category
+                if(refEnemies[2].Skills[skillIndex].Category == SkillCategory.Single) {
+                    if(CheckType(refEnemies[2].Skills[skillIndex].Type)) targetIndex = SetupEnemyTarget();
+                    else targetIndex = SetupFriendlyTarget();
+                }
+                else targetIndex = -1;
+
+                //Init Skill
+                StartCoroutine(EnemySkill(skillIndex, targetIndex));
+                break;
+        }
+    }
+
+    IEnumerator EnemySkill(int skillIndex, int targetIndex) {
+        string text;
+        switch(combatState) {
+            case CombatState.ENEMYTURN0:
+                text = $"{refEnemies[0].Name} Used {refEnemies[0].Skills[skillIndex].Type}";
+                StartCoroutine(TypeSentence(text));
+
+                yield return new WaitForSeconds(1);
+
+                refEnemies[0].CurrentMana -= refEnemies[0].Skills[skillIndex].Value;
+                CurrentBattleUI.transform.Find($"Characters/Enemy/Enemy0").GetComponent<Unit>().UpdateMP(refEnemies[0].CurrentMana);
+
+                //Set Attack (All)
+                if(refEnemies[0].Skills[skillIndex].Category == SkillCategory.All) {
+                    if(CheckType(refEnemies[0].Skills[skillIndex].Type)) SkillAllEnemy_Offensive(refCharacters, refEnemies[0].Skills[skillIndex].ActualModifier);
+                    else {
+                        SkillAllEnemy_Support(refEnemies, refEnemies[0].Skills[skillIndex].ActualModifier, CheckSupport(refEnemies[0].Skills[skillIndex].Type));
+                    }
+                }
+
+                //Set Attack (Single)
+                else {
+                    if(CheckType(refEnemies[0].Skills[skillIndex].Type)) SkillEnemy_Offensive(refCharacters[targetIndex], refEnemies[0].Skills[skillIndex].ActualModifier, targetIndex);
+                    else {
+                        SkillEnemy_Support(refEnemies[targetIndex], refCharacters[0].Skills[skillIndex].ActualModifier, targetIndex, CheckSupport(refCharacters[0].Skills[skillIndex].Type));
+                    }
+                }
+
+                yield return new WaitForSeconds(1);
+
+                if(CheckEnemyCount()) {
+                    switch(refEnemies.Count) {
+                        case 1:
+                            text = $"{refCharacters[0].Name}'s Turn";
+                            StartCoroutine(TypeSentence(text));
+                            yield return new WaitForSeconds(1);
+                            combatState = CombatState.PLAYERTURN;
+                            MainButtons.SetActive(true);
+                            PlayerTurn();
+                            break;
+                        default:
+                            text = $"{refEnemies[1].Name}'s Turn";
+                            StartCoroutine(TypeSentence(text));
+                            yield return new WaitForSeconds(1);
+                            combatState = CombatState.ENEMYTURN1;
+                            EnemyTurn();
+                            break;
+                    }
+                }
+                
+                else {
+                    text = $"You and Your Companions Have Perished.";
+                    StartCoroutine(TypeSentence(text));
+                    yield return new WaitForSeconds(1);
+                    Escape();
+                }
+                break;
+
+            case CombatState.ENEMYTURN1:
+                text = $"{refEnemies[1].Name} Used {refEnemies[1].Skills[skillIndex].Type}";
+                StartCoroutine(TypeSentence(text));
+
+                yield return new WaitForSeconds(1);
+
+                refEnemies[1].CurrentMana -= refEnemies[1].Skills[skillIndex].Value;
+                CurrentBattleUI.transform.Find($"Characters/Enemy/Enemy1").GetComponent<Unit>().UpdateMP(refEnemies[1].CurrentMana);
+
+                //Set Attack (All)
+                if(refEnemies[1].Skills[skillIndex].Category == SkillCategory.All) {
+                    if(CheckType(refEnemies[1].Skills[skillIndex].Type)) SkillAllEnemy_Offensive(refCharacters, refEnemies[1].Skills[skillIndex].ActualModifier);
+                    else {
+                        SkillAllEnemy_Support(refEnemies, refEnemies[1].Skills[skillIndex].ActualModifier, CheckSupport(refEnemies[1].Skills[skillIndex].Type));
+                    }
+                }
+
+                //Set Attack (Single)
+                else {
+                    if(CheckType(refEnemies[1].Skills[skillIndex].Type)) SkillEnemy_Offensive(refCharacters[targetIndex], refEnemies[1].Skills[skillIndex].ActualModifier, targetIndex);
+                    else {
+                        SkillEnemy_Support(refEnemies[targetIndex], refCharacters[1].Skills[skillIndex].ActualModifier, targetIndex, CheckSupport(refCharacters[1].Skills[skillIndex].Type));
+                    }
+                }
+
+                yield return new WaitForSeconds(1);
+
+                if(CheckEnemyCount()) {
+                    switch(refEnemies.Count) {
+                        case 2:
+                            text = $"{refCharacters[0].Name}'s Turn";
+                            StartCoroutine(TypeSentence(text));
+                            yield return new WaitForSeconds(1);
+                            combatState = CombatState.PLAYERTURN;
+                            MainButtons.SetActive(true);
+                            PlayerTurn();
+                            break;
+                        case 3:
+                            text = $"{refEnemies[2].Name}'s Turn";
+                            StartCoroutine(TypeSentence(text));
+                            yield return new WaitForSeconds(1);
+                            combatState = CombatState.ENEMYTURN2;
+                            EnemyTurn();
+                            break;
+                    }
+                }
+                
+                else {
+                    text = $"You and Your Companions Have Perished.";
+                    StartCoroutine(TypeSentence(text));
+                    yield return new WaitForSeconds(1);
+                    Escape();
+                }
+                break;
+
+            case CombatState.ENEMYTURN2:
+                text = $"{refEnemies[2].Name} Used {refEnemies[2].Skills[skillIndex].Type}";
+                StartCoroutine(TypeSentence(text));
+
+                yield return new WaitForSeconds(1);
+
+                refEnemies[2].CurrentMana -= refEnemies[2].Skills[skillIndex].Value;
+                CurrentBattleUI.transform.Find($"Characters/Enemy/Enemy2").GetComponent<Unit>().UpdateMP(refEnemies[2].CurrentMana);
+
+                //Set Attack (All)
+                if(refEnemies[2].Skills[skillIndex].Category == SkillCategory.All) {
+                    if(CheckType(refEnemies[2].Skills[skillIndex].Type)) SkillAllEnemy_Offensive(refCharacters, refEnemies[2].Skills[skillIndex].ActualModifier);
+                    else {
+                        SkillAllEnemy_Support(refEnemies, refEnemies[2].Skills[skillIndex].ActualModifier, CheckSupport(refEnemies[2].Skills[skillIndex].Type));
+                    }
+                }
+
+                //Set Attack (Single)
+                else {
+                    if(CheckType(refEnemies[2].Skills[skillIndex].Type)) SkillEnemy_Offensive(refCharacters[targetIndex], refEnemies[2].Skills[skillIndex].ActualModifier, targetIndex);
+                    else {
+                        SkillEnemy_Support(refEnemies[targetIndex], refCharacters[2].Skills[skillIndex].ActualModifier, targetIndex, CheckSupport(refCharacters[2].Skills[skillIndex].Type));
+                    }
+                }
+
+                yield return new WaitForSeconds(1);
+
+                if(CheckEnemyCount()) {
+                    text = $"{refCharacters[0].Name}'s Turn";
+                    StartCoroutine(TypeSentence(text));
+                    yield return new WaitForSeconds(1);
+                    combatState = CombatState.PLAYERTURN;
+                    MainButtons.SetActive(true);
+                    PlayerTurn();
+                    break;
+                }
+                
+                else {
+                    text = $"You and Your Companions Have Perished.";
+                    StartCoroutine(TypeSentence(text));
+                    yield return new WaitForSeconds(1);
+                    Escape();
+                }
+                break;
+        }
+    }
+
+    int SetupEnemyTarget() {
+        return Random.Range(0, refCharacters.Count-1);
+    }
+
+    int SetupFriendlyTarget() {
+        return Random.Range(0, refEnemies.Count-1);
+    }
+
+    //Step 2
     //Attack Button 
     public void OnAttackButton() {
         if (combatState == CombatState.PLAYERTURN || combatState == CombatState.COMPANIONTURN1 || combatState == CombatState.COMPANIONTURN2 ) {
@@ -150,7 +375,16 @@ public class CombatManager : MonoBehaviour {
         }
     }
 
+    //Step 5 | Step 5.3
     public void OnUseButton() {
+        for(int i = 0; i < refEnemies.Count; i++) {
+            CurrentArea.transform.Find($"Characters/Enemy{i}").GetComponent<OutlineEntity>().HighlightUnit(false);
+        }
+
+        for(int i = 0; i < 4; i++) {
+            SkillButtons.transform.Find($"Skill{i}").GetComponent<Image>().color = Color.white;
+        }
+
         switch(combatState) {
             case CombatState.PLAYERTURN:
                 if(refCharacters[0].Skills[SkillIndex].Category == SkillCategory.All) {
@@ -160,14 +394,31 @@ public class CombatManager : MonoBehaviour {
                     StartCoroutine(SetupTarget());
                 }
                 break;
+            case CombatState.COMPANIONTURN1:
+                if(refCharacters[1].Skills[SkillIndex].Category == SkillCategory.All) {
+                    StartCoroutine(ActivateSkill());
+                }
+                else {
+                    StartCoroutine(SetupTarget());
+                }
+                break;
+            case CombatState.COMPANIONTURN2:
+                if(refCharacters[2].Skills[SkillIndex].Category == SkillCategory.All) {
+                    StartCoroutine(ActivateSkill());
+                }
+                else {
+                    StartCoroutine(SetupTarget());
+                }
+                break;
         }
-        //StartCoroutine(ActivateSkill());
     }
 
+    //Exit
     public void OnEscapeButton() {
         Escape();
     }
 
+    //Step 3
     IEnumerator SetupAttack() {
         string text = "Loading Skills...";
         StartCoroutine(TypeSentence(text));
@@ -183,6 +434,7 @@ public class CombatManager : MonoBehaviour {
         SetupSkills();
     }
 
+    //Step 4
     void SetupSkills() {
         switch(combatState) {
             case CombatState.PLAYERTURN:
@@ -197,9 +449,34 @@ public class CombatManager : MonoBehaviour {
                     }
                 } 
                 break;
+            case CombatState.COMPANIONTURN1:
+                for(int i = 0; i < refCharacters[1].Skills.Count; i++) {
+                    var skill = SkillButtons.transform.Find($"Skill{i}/Text").GetComponent<TextMeshProUGUI>();
+                    if(skill == null) Debug.Log("error");
+                    else {
+                        skill.transform.parent.gameObject.SetActive(true);
+                        skill.transform.parent.GetComponent<SkillController>().SetIndex(i);
+                        skill.text = refCharacters[1].Skills[i].Type.ToString();
+                        skill.transform.parent.GetComponent<Button>().onClick.AddListener(() => ButtonSelection());
+                    }
+                } 
+                break;
+            case CombatState.COMPANIONTURN2:
+                for(int i = 0; i < refCharacters[2].Skills.Count; i++) {
+                    var skill = SkillButtons.transform.Find($"Skill{i}/Text").GetComponent<TextMeshProUGUI>();
+                    if(skill == null) Debug.Log("error");
+                    else {
+                        skill.transform.parent.gameObject.SetActive(true);
+                        skill.transform.parent.GetComponent<SkillController>().SetIndex(i);
+                        skill.text = refCharacters[2].Skills[i].Type.ToString();
+                        skill.transform.parent.GetComponent<Button>().onClick.AddListener(() => ButtonSelection());
+                    }
+                } 
+                break;
         }
     }
 
+    //Step5.1
     IEnumerator SetupTarget() {
         UseButton.SetActive(false);
         SkillButtons.SetActive(false);
@@ -213,26 +490,404 @@ public class CombatManager : MonoBehaviour {
         dialogueText.gameObject.SetActive(false);
         TargetButtons.SetActive(true);
 
-        SelectTargetEntity();
-    }
-
-    void SelectTargetEntity() {
         switch(combatState) {
             case CombatState.PLAYERTURN:
-                for(int i = 0; i < refEnemies.Count; i++) {
-                    var target = TargetButtons.transform.Find($"Target{i}/Text").GetComponent<TextMeshProUGUI>();
-                    if(target == null) Debug.Log("Error");
-                    else {
-                        target.transform.parent.gameObject.SetActive(true);
-                        target.transform.parent.GetComponent<TargetController>().SetTarget(i);
-                        target.text = refEnemies[i].Name.ToString();
-                        target.transform.parent.GetComponent<Button>().onClick.AddListener(() => TargetSelection());
-                    }
-                } 
+                if(CheckType(refCharacters[0].Skills[SkillIndex].Type)) SelectTargetEnemy();
+                else SelectTargetFriendly();
+                break;
+            case CombatState.COMPANIONTURN1:
+                if(CheckType(refCharacters[1].Skills[SkillIndex].Type)) SelectTargetEnemy();
+                else SelectTargetFriendly();
+                break;
+            case CombatState.COMPANIONTURN2:
+                if(CheckType(refCharacters[2].Skills[SkillIndex].Type)) SelectTargetEnemy();
+                else SelectTargetFriendly();
                 break;
         }
     }
 
+    //Step5.2
+    void SelectTargetEnemy() {
+        for(int i = 0; i < refEnemies.Count; i++) {
+            var target = TargetButtons.transform.Find($"Target{i}/Text").GetComponent<TextMeshProUGUI>();
+            if(target == null) Debug.Log("Error");
+            else {
+                target.transform.parent.gameObject.SetActive(true);
+                target.transform.parent.GetComponent<TargetController>().SetTarget(i);
+                target.text = refEnemies[i].Name.ToString();
+                target.transform.parent.GetComponent<Button>().onClick.AddListener(() => TargetSelection());
+            }
+        } 
+    }
+
+    void SelectTargetFriendly() {
+        for(int i = 0; i < refCharacters.Count; i++) {
+            var target = TargetButtons.transform.Find($"Target{i}/Text").GetComponent<TextMeshProUGUI>();
+            if(target == null) Debug.Log("Error");
+            else {
+                target.transform.parent.gameObject.SetActive(true);
+                target.transform.parent.GetComponent<TargetController>().SetTarget(i);
+                target.text = refCharacters[i].Name.ToString();
+                target.transform.parent.GetComponent<Button>().onClick.AddListener(() => TargetSelection());
+            }
+        } 
+    }
+
+    //Step 6
+    IEnumerator ActivateSkill() {
+        string text;
+        SkillButtons.SetActive(false);
+        SideButtons.SetActive(false);
+        dialogueText.gameObject.SetActive(true);
+        
+
+        switch(combatState) {
+            //Player's Turn
+            case CombatState.PLAYERTURN:
+                text = $"{refCharacters[0].Name} Used {refCharacters[0].Skills[SkillIndex].Type}";
+                StartCoroutine(TypeSentence(text));
+
+                yield return new WaitForSeconds(1);
+
+                //Receive Damage
+                refCharacters[0].CurrentMana -= refCharacters[0].Skills[SkillIndex].Value;
+                CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateMP(refCharacters[0].CurrentMana);
+
+                //Set Attack (All)
+                if(refCharacters[0].Skills[SkillIndex].Category == SkillCategory.All) {
+                    if(CheckType(refCharacters[0].Skills[SkillIndex].Type)) SkillAllFriendly_Offensive(refEnemies, refCharacters[0].Skills[SkillIndex].ActualModifier);
+                    else {
+                        SkillAllFriendly_Support(refCharacters, refCharacters[0].Skills[SkillIndex].ActualModifier, CheckSupport(refCharacters[0].Skills[SkillIndex].Type));
+                    }
+                }
+
+                //Set Attack (Single)
+                else {
+                    if(CheckType(refCharacters[0].Skills[SkillIndex].Type)) SkillFriendly_Offensive(refEnemies[TargetIndex], refCharacters[0].Skills[SkillIndex].ActualModifier);
+                    else {
+                        SkillFriendly_Support(refCharacters[TargetIndex], refCharacters[0].Skills[SkillIndex].ActualModifier, CheckSupport(refCharacters[0].Skills[SkillIndex].Type));
+                    }
+                }
+
+                yield return new WaitForSeconds(1);
+
+                if(CheckEnemyCount()) {
+                    switch(refCharacters.Count) {
+                        case 1:
+                            text = $"{refEnemies[0].Name}'s Turn";
+                            StartCoroutine(TypeSentence(text));
+                            yield return new WaitForSeconds(1);
+                            combatState = CombatState.ENEMYTURN0;
+                            //Enemy
+                            break;
+                        default:
+                            text = $"{refCharacters[1].Name}'s Turn";
+                            StartCoroutine(TypeSentence(text));
+                            yield return new WaitForSeconds(1);
+                            combatState = CombatState.COMPANIONTURN1;
+                            MainButtons.SetActive(true);
+                            FriendlyTurn();
+                            break;
+                    }
+                }
+                
+                else {
+                    text = $"All Enemies Have Perished.";
+                    StartCoroutine(TypeSentence(text));
+                    yield return new WaitForSeconds(1);
+                    Escape();
+                }
+                break;
+
+            //CompanionTurn1
+            case CombatState.COMPANIONTURN1:
+                text = $"{refCharacters[1].Name} Used {refCharacters[1].Skills[SkillIndex].Type}";
+                StartCoroutine(TypeSentence(text));
+
+                yield return new WaitForSeconds(1);
+
+                //Receive Damage
+                refCharacters[1].CurrentMana -= refCharacters[1].Skills[SkillIndex].Value;
+                CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateMP(refCharacters[1].CurrentMana);
+
+                //Set Attack (All)
+                if(refCharacters[1].Skills[SkillIndex].Category == SkillCategory.All) {
+                    if(CheckType(refCharacters[1].Skills[SkillIndex].Type)) SkillAllFriendly_Offensive(refEnemies, refCharacters[1].Skills[SkillIndex].ActualModifier);
+                    else {
+                        SkillAllFriendly_Support(refCharacters, refCharacters[1].Skills[SkillIndex].ActualModifier, CheckSupport(refCharacters[1].Skills[SkillIndex].Type));
+                    }
+                }
+
+                //Set Attack (Single)
+                else {
+                    if(CheckType(refCharacters[1].Skills[SkillIndex].Type)) SkillFriendly_Offensive(refEnemies[TargetIndex], refCharacters[1].Skills[SkillIndex].ActualModifier);
+                    else {
+                        SkillFriendly_Support(refCharacters[TargetIndex], refCharacters[1].Skills[SkillIndex].ActualModifier, CheckSupport(refCharacters[1].Skills[SkillIndex].Type));
+                    }
+                }
+
+                yield return new WaitForSeconds(1);
+
+                if(CheckEnemyCount()) {
+                    switch(refCharacters.Count) {
+                        case 2:
+                            text = $"{refEnemies[0].Name}'s Turn";
+                            StartCoroutine(TypeSentence(text));
+                            yield return new WaitForSeconds(1);
+                            combatState = CombatState.ENEMYTURN0;
+                            //Enemy
+                            break;
+                        case 3:
+                            text = $"{refCharacters[2].Name}'s Turn";
+                            StartCoroutine(TypeSentence(text));
+                            yield return new WaitForSeconds(1);
+                            combatState = CombatState.COMPANIONTURN2;
+                            MainButtons.SetActive(true);
+                            FriendlyTurn();
+                            break;
+                    }
+                }
+                
+                else {
+                    text = $"All Enemies Have Perished.";
+                    StartCoroutine(TypeSentence(text));
+                    yield return new WaitForSeconds(1);
+                    Escape();
+                }
+                break;
+
+            //Companion2's Turn
+            case CombatState.COMPANIONTURN2:
+                text = $"{refCharacters[2].Name} Used {refCharacters[2].Skills[SkillIndex].Type}";
+                StartCoroutine(TypeSentence(text));
+
+                yield return new WaitForSeconds(1);
+
+                //Receive Damage
+                refCharacters[2].CurrentMana -= refCharacters[2].Skills[SkillIndex].Value;
+                CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateMP(refCharacters[2].CurrentMana);
+
+                //Set Attack (All)
+                if(refCharacters[2].Skills[SkillIndex].Category == SkillCategory.All) {
+                    if(CheckType(refCharacters[2].Skills[SkillIndex].Type)) SkillAllFriendly_Offensive(refEnemies, refCharacters[2].Skills[SkillIndex].ActualModifier);
+                    else {
+                        SkillAllFriendly_Support(refCharacters, refCharacters[2].Skills[SkillIndex].ActualModifier, CheckSupport(refCharacters[2].Skills[SkillIndex].Type));
+                    }
+                }
+
+                //Set Attack (Single)
+                else {
+                    if(CheckType(refCharacters[2].Skills[SkillIndex].Type)) SkillFriendly_Offensive(refEnemies[TargetIndex], refCharacters[2].Skills[SkillIndex].ActualModifier);
+                    else {
+                        SkillFriendly_Support(refCharacters[TargetIndex], refCharacters[2].Skills[SkillIndex].ActualModifier, CheckSupport(refCharacters[2].Skills[SkillIndex].Type));
+                    }
+                }
+
+                yield return new WaitForSeconds(1);
+
+                if(CheckEnemyCount()) {
+                    text = $"{refEnemies[0].Name}'s Turn";
+                    StartCoroutine(TypeSentence(text));
+                    yield return new WaitForSeconds(1);
+                    combatState = CombatState.ENEMYTURN0;
+                    //Enemy
+                    break;
+                }
+                
+                else {
+                    text = $"All Enemies Have Perished.";
+                    StartCoroutine(TypeSentence(text));
+                    yield return new WaitForSeconds(1);
+                    Escape();
+                }
+                break;
+        }
+    }
+
+    //Win Condition
+    bool CheckEnemyCount() {
+        switch(refEnemies.Count) {
+            case 1:
+                if(refEnemies[0].currentState == CharacterState.Dead) {
+                    return false;
+                }
+                else return true;
+            case 2:
+                if(refEnemies[0].currentState == CharacterState.Dead && refEnemies[1].currentState == CharacterState.Dead) {
+                    return false;
+                }
+                else return true;
+            case 3:
+                if(refEnemies[0].currentState == CharacterState.Dead && refEnemies[1].currentState == CharacterState.Dead && refEnemies[2].currentState == CharacterState.Dead) {
+                    return false;
+                }
+                else return true;
+        }
+        return false;
+    }
+
+    void CheckDead(Enemy enemy) {
+        if(enemy.CurrentHealth == 0) {
+            enemy.currentState = CharacterState.Dead;
+            string text = $"{enemy.Name} Has Perished.";
+            StartCoroutine(TypeSentence(text));
+        }
+    }
+
+    void CheckDeadFriendly(Character friendly) {
+        if(friendly.CurrentHealth == 0) {
+            friendly.currentState = CharacterState.Dead;
+            string text = $"{friendly.Name} Has Perished.";
+            StartCoroutine(TypeSentence(text));
+        }
+    }
+
+    //Skills(Friendly)
+    void SkillAllFriendly_Offensive(List<Enemy> enemy, int value) {
+        for(int i = 0; i < enemy.Count; i++) {
+            enemy[i].CurrentHealth -= value;
+            CurrentBattleUI.transform.Find($"Characters/Enemy/Enemy{i}").GetComponent<Unit>().UpdateHP(enemy[i].CurrentHealth);
+
+            string text = $"{enemy[i].Name} Took {value} Damage";
+            StartCoroutine(TypeSentence(text));
+
+            CheckDead(enemy[i]);
+        }
+    }
+
+    void SkillAllFriendly_Support(List<Character> friendly, int value, bool type) {
+        string text;
+        switch(type) {
+            case true: //Heal HP
+                for(int i = 0; i < friendly.Count; i++) {
+                    friendly[i].CurrentHealth += value;
+                    if(i == 0) CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateHP(friendly[0].CurrentHealth);
+                    else CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{i}").GetComponent<Unit>().UpdateHP(friendly[i].CurrentHealth);
+                }
+                text = $"You and Your Companions Received {value} HP";
+                StartCoroutine(TypeSentence(text));
+                break;
+            case false: //Heal MP
+                for(int i = 0; i < friendly.Count; i++) {
+                    friendly[i].CurrentMana += value;
+                    if(i == 0) CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateMP(friendly[0].CurrentMana);
+                    else CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{i}").GetComponent<Unit>().UpdateMP(friendly[i].CurrentMana);
+                }
+                text = $"You and Your Companions Received {value} MP";
+                StartCoroutine(TypeSentence(text));
+                break;
+        }
+    }
+
+    void SkillFriendly_Offensive(Enemy enemy, int value) {
+        enemy.CurrentHealth -= value;
+        CurrentBattleUI.transform.Find($"Characters/Enemy/Enemy{TargetIndex}").GetComponent<Unit>().UpdateHP(enemy.CurrentHealth);
+        string text = $"{enemy.Name} Took {value} Damage";
+        StartCoroutine(TypeSentence(text));
+        CheckDead(enemy);
+    }
+
+    void SkillFriendly_Support(Character friendly, int value, bool type) {
+        string text;
+        switch(type) {
+            case true:
+                friendly.CurrentHealth += value;
+                if(TargetIndex == 0) CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateHP(friendly.CurrentHealth);
+                else CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{TargetIndex}").GetComponent<Unit>().UpdateHP(friendly.CurrentHealth);
+                text = $"{friendly.Name} Received {value} HP";
+                StartCoroutine(TypeSentence(text));
+                break;
+            case false:
+                friendly.CurrentMana += value;
+                if(TargetIndex == 0) CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateMP(friendly.CurrentMana);
+                else CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{TargetIndex}").GetComponent<Unit>().UpdateMP(friendly.CurrentMana);
+                text = $"{friendly.Name} Received {value} MP";
+                StartCoroutine(TypeSentence(text));
+                break;
+        }
+    }
+
+    //Skills(Enemy)
+    void SkillAllEnemy_Offensive(List<Character> friendly, int value) {
+        for(int i = 0; i < friendly.Count; i++) {
+            if(i == 0) {
+                friendly[i].CurrentHealth -= value;
+                CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateHP(friendly[i].CurrentHealth);
+
+                string text = $"{friendly[i].Name} Took {value} Damage";
+                StartCoroutine(TypeSentence(text));
+
+                CheckDeadFriendly(friendly[i]);
+            }
+            else {
+                friendly[i].CurrentHealth -= value;
+                CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{i}").GetComponent<Unit>().UpdateHP(friendly[i].CurrentHealth);
+
+                string text = $"{friendly[i].Name} Took {value} Damage";
+                StartCoroutine(TypeSentence(text));
+
+                CheckDeadFriendly(friendly[i]);
+            }
+            
+        }
+    }
+
+    void SkillAllEnemy_Support(List<Enemy> enemy, int value, bool type) {
+        string text;
+        switch(type) {
+            case true: //Heal HP
+                for(int i = 0; i < enemy.Count; i++) {
+                    enemy[i].CurrentHealth += value;
+                    CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{i}").GetComponent<Unit>().UpdateHP(enemy[i].CurrentHealth);
+                }
+                text = $"The Enemy Has Received {value} HP";
+                StartCoroutine(TypeSentence(text));
+                break;
+            case false: //Heal MP
+                for(int i = 0; i < enemy.Count; i++) {
+                    enemy[i].CurrentMana += value;
+                    CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{i}").GetComponent<Unit>().UpdateMP(enemy[i].CurrentMana);
+                }
+                text = $"The Enemy Has Received {value} MP";
+                StartCoroutine(TypeSentence(text));
+                break;
+        }
+    }
+
+    void SkillEnemy_Offensive(Character friendly, int value, int targetIndex) {
+        friendly.CurrentHealth -= value;
+
+        if(targetIndex == 0) CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateHP(friendly.CurrentHealth);
+        else CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{targetIndex}").GetComponent<Unit>().UpdateHP(friendly.CurrentHealth);
+
+        string text = $"{friendly.Name} Took {value} Damage";
+        StartCoroutine(TypeSentence(text));
+
+        CheckDeadFriendly(friendly);
+    }
+
+    void SkillEnemy_Support(Enemy enemy, int value, int targetIndex, bool type) {
+        string text;
+        switch(type) {
+            case true:
+                enemy.CurrentHealth += value;
+                CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{targetIndex}").GetComponent<Unit>().UpdateHP(enemy.CurrentHealth);
+
+                text = $"{enemy.Name} Received {value} HP";
+                StartCoroutine(TypeSentence(text));
+                break;
+            case false:
+                enemy.CurrentMana += value;
+                CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{targetIndex}").GetComponent<Unit>().UpdateMP(enemy.CurrentMana);
+
+                text = $"{enemy.Name} Received {value} MP";
+                StartCoroutine(TypeSentence(text));
+                break;
+        }
+    }
+
+
+    //Misc
     void ButtonSelection() {
         switch(combatState) {
             case CombatState.PLAYERTURN:
@@ -246,6 +901,50 @@ public class CombatManager : MonoBehaviour {
 
                 //Skill
                 if(refCharacters[0].Skills[SkillIndex].Category == SkillCategory.All) {
+                    for(int i = 0; i < refEnemies.Count; i++) {
+                        CurrentArea.transform.Find($"Characters/Enemy{i}").GetComponent<OutlineEntity>().HighlightUnit(true);
+                    }
+                }
+                else {
+                    for(int i = 0; i < refEnemies.Count; i++) {
+                        CurrentArea.transform.Find($"Characters/Enemy{i}").GetComponent<OutlineEntity>().HighlightUnit(false);
+                    }
+                } 
+                break;
+
+            case CombatState.COMPANIONTURN1:
+                //Reset Selected
+                for(int i = 0; i < refCharacters[1].Skills.Count; i++) {
+                    if(SkillIndex == i) {
+                        SkillButtons.transform.Find($"Skill{SkillIndex}").GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
+                    }
+                    else SkillButtons.transform.Find($"Skill{i}").GetComponent<Image>().color = Color.white;
+                }
+
+                //Skill
+                if(refCharacters[1].Skills[SkillIndex].Category == SkillCategory.All) {
+                    for(int i = 0; i < refEnemies.Count; i++) {
+                        CurrentArea.transform.Find($"Characters/Enemy{i}").GetComponent<OutlineEntity>().HighlightUnit(true);
+                    }
+                }
+                else {
+                    for(int i = 0; i < refEnemies.Count; i++) {
+                        CurrentArea.transform.Find($"Characters/Enemy{i}").GetComponent<OutlineEntity>().HighlightUnit(false);
+                    }
+                } 
+                break;
+            
+            case CombatState.COMPANIONTURN2:
+                //Reset Selected
+                for(int i = 0; i < refCharacters[2].Skills.Count; i++) {
+                    if(SkillIndex == i) {
+                        SkillButtons.transform.Find($"Skill{SkillIndex}").GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
+                    }
+                    else SkillButtons.transform.Find($"Skill{i}").GetComponent<Image>().color = Color.white;
+                }
+
+                //Skill
+                if(refCharacters[2].Skills[SkillIndex].Category == SkillCategory.All) {
                     for(int i = 0; i < refEnemies.Count; i++) {
                         CurrentArea.transform.Find($"Characters/Enemy{i}").GetComponent<OutlineEntity>().HighlightUnit(true);
                     }
@@ -274,107 +973,6 @@ public class CombatManager : MonoBehaviour {
         UseButton.SetActive(true);
     }
 
-    IEnumerator ActivateSkill() {
-        SkillButtons.SetActive(false);
-        SideButtons.SetActive(false);
-        dialogueText.gameObject.SetActive(true);
-
-        switch(combatState) {
-            case CombatState.PLAYERTURN:
-                string text = $"{refCharacters[0].Name} Used {refCharacters[0].Skills[SkillIndex].Type}";
-                StartCoroutine(TypeSentence(text));
-
-                //Receive Damage
-                refCharacters[0].CurrentMana -= refCharacters[0].Skills[SkillIndex].Value;
-                CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateMP(refCharacters[0].CurrentMana);
-
-                //Set Attack (All)
-                if(refCharacters[0].Skills[SkillIndex].Category == SkillCategory.All) {
-                    if(CheckType(refCharacters[0].Skills[SkillIndex].Type)) SkillAllFriendly_Offensive(refEnemies, refCharacters[0].Skills[SkillIndex].ActualModifier);
-                    else {
-                        SkillAllFriendly_Support(refCharacters, refCharacters[0].Skills[SkillIndex].ActualModifier, CheckSupport(refCharacters[0].Skills[SkillIndex].Type));
-                    }
-                }
-
-                //Set Attack (Single)
-                else {
-                    if(CheckType(refCharacters[0].Skills[SkillIndex].Type)) SkillFriendly_Offensive(refEnemies[TargetIndex], refCharacters[0].Skills[SkillIndex].ActualModifier);
-                    else {
-                        SkillFriendly_Support(refCharacters[TargetIndex], refCharacters[0].Skills[SkillIndex].ActualModifier, CheckSupport(refCharacters[0].Skills[SkillIndex].Type));
-                    }
-                }
-
-                if(CheckEnemyCount()) {
-                    Debug.Log("No Enemies Left.");
-                }
-                
-                else {
-                    Debug.Log($"Enemies Left: {refEnemies.Count}" );
-                }
-                break;
-        }
-
-        
-        yield return new WaitForSeconds(1);
-
-        
-        //Switch combat state to next
-    }
-
-    bool CheckEnemyCount() {
-        int deadCounter = 0;
-        for(int i = 0; i < refEnemies.Count; i++) {
-            if(refEnemies[i].CurrentHealth == 0) {
-                CurrentArea.transform.Find($"Characters/Enemy{i}").gameObject.SetActive(false);
-                deadCounter += 1;
-            }
-        }
-
-        if(deadCounter == refEnemies.Count) return true;
-        else return false;
-    }
-
-    void SkillAllFriendly_Offensive(List<Enemy> enemy, int value) {
-        for(int i = 0; i < enemy.Count; i++) {
-            enemy[i].CurrentHealth -= value;
-            CurrentBattleUI.transform.Find($"Characters/Enemy/Enemy{i}").GetComponent<Unit>().UpdateHP(enemy[i].CurrentHealth);
-        }
-    }
-
-    void SkillAllFriendly_Support(List<Character> friendly, int value, bool type) {
-        switch(type) {
-            case true: //Heal HP
-                for(int i = 0; i < friendly.Count; i++) {
-                    friendly[i].CurrentHealth += value;
-                    if(i == 0) CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateHP(friendly[0].CurrentHealth);
-                    else CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{i}").GetComponent<Unit>().UpdateHP(friendly[i].CurrentHealth);
-                }
-                break;
-            case false: //Heal MP
-                for(int i = 0; i < friendly.Count; i++) {
-                    friendly[i].CurrentMana += value;
-                    if(i == 0) CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateMP(friendly[0].CurrentMana);
-                    else CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{i}").GetComponent<Unit>().UpdateMP(friendly[i].CurrentMana);
-                }
-                break;
-        }
-    }
-
-    void SkillFriendly_Offensive(Enemy enemy, int value) {
-        enemy.CurrentHealth -= value;
-        CurrentBattleUI.transform.Find($"Characters/Enemy/Enemy{TargetIndex}").GetComponent<Unit>().UpdateHP(enemy.CurrentHealth);
-    }
-
-    void SkillFriendly_Support(Character friendly, int value, bool type) {
-        switch(type) {
-            case true:
-                friendly.CurrentHealth += value;
-                if(TargetIndex == 0) CurrentBattleUI.transform.Find($"Characters/Friendly/Player").GetComponent<Unit>().UpdateHP(friendly.CurrentHealth);
-                else CurrentBattleUI.transform.Find($"Characters/Friendly/Companion{TargetIndex}").GetComponent<Unit>().UpdateHP(friendly.CurrentHealth);
-                break;
-        }
-    }
-
     bool CheckType(SkillType type) {
         if(type != SkillType.AreaHeal || type != SkillType.AreaRestore || type != SkillType.Heal || type != SkillType.Restore) {
             return true;
@@ -389,7 +987,7 @@ public class CombatManager : MonoBehaviour {
         else return false;
     }
 
-
+    //Return
     public void ReturnMenu() {
 
         dialogueText.gameObject.SetActive(true);
@@ -398,13 +996,12 @@ public class CombatManager : MonoBehaviour {
         SkillButtons.SetActive(false);
         UseButton.SetActive(false);
 
-        PlayerTurn();
+        FriendlyTurn();
     }
 
+    //Escape
     void Escape() {
         combatState = CombatState.NONE;
-        Camera.SetActive(true);
-        MainUI.SetActive(false);
 
         //Battle UI Disabled
         CurrentBattleUI.SetActive(true);
@@ -412,6 +1009,10 @@ public class CombatManager : MonoBehaviour {
         SideButtons.SetActive(false);
         SkillButtons.SetActive(false);
         UseButton.SetActive(false);
+
+        //Re-Enable Everything
+        Camera.SetActive(true);
+        MainUI.SetActive(false);
     }
 
     IEnumerator TypeSentence(string sentence) {

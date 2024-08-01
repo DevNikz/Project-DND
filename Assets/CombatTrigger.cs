@@ -16,6 +16,7 @@ public class CombatTrigger : MonoBehaviour
     void InitEnemies() {
         if(Enemies.Count > 0 ) {
             for(int i = 0; i < Enemies.Count; i++) {
+                Enemies[i].currentState = CharacterState.Alive;
                 for(int j = 0; j < Enemies[i].Level; j++) {
                     Enemies[i].Health += UtilityMisc.CalculateHealth(Enemies[i].Class, j+1, Enemies[i].Constitution);
                     Enemies[i].Mana += UtilityMisc.CalculateMana(Enemies[i].Class, j+1, Enemies[i].Intelligence);
@@ -34,7 +35,6 @@ public class CombatTrigger : MonoBehaviour
 
     [ContextMenu("TriggerCombat")]
     public void TriggerCombat() {
-        // CheckCount();
         CombatManager.Instance.StartCombat(ParentArea, Characters, Enemies);
     }
 
@@ -67,6 +67,7 @@ public class CombatTrigger : MonoBehaviour
     Character GetPlayer() {
         Character charTemp = new Character
         {
+            currentState = CharacterState.Alive,
             Name = PlayerManager.Instance.Name,
             Class = PlayerManager.Instance.Class,
             Level = PlayerManager.Instance.Level,
@@ -83,6 +84,7 @@ public class CombatTrigger : MonoBehaviour
     Character GetCompanion(int index) {
         Character charTemp = new Character
         {
+            currentState = CharacterState.Alive,
             Name = CompanionManager.Instance.Companions[index].Name.ToString(),
             Class = CompanionManager.Instance.Companions[index].Class,
             Level = CompanionManager.Instance.Companions[index].Level,
