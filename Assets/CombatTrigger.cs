@@ -26,15 +26,21 @@ public class CombatTrigger : MonoBehaviour
 
                 Enemies[i].Constitution = UtilityMisc.Constitution(Enemies[i].Class);
                 Enemies[i].Intelligence = UtilityMisc.Intelligence(Enemies[i].Class);
+                
+                //Skills
+                if(Enemies[i].Skills.Count > 0) {
+                    for(int j = 0; j < Enemies[i].Skills.Count; j++) {
+                        Enemies[i].Skills[j].ActualModifier = UtilityMisc.CalculateModifier(Enemies[i].Level, Enemies[i].Skills[j].Modifier);
+                    }
+                }
             }
         }
         else Debug.Log("Enemies Not Integrated?!");
-
-        CheckCount();
     }
 
     [ContextMenu("TriggerCombat")]
     public void TriggerCombat() {
+        CheckCount();
         CombatManager.Instance.StartCombat(ParentArea, Characters, Enemies);
     }
 

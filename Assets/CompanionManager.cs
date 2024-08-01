@@ -34,6 +34,7 @@ public class CompanionManager : MonoBehaviour
         else {
             Companions[index].Level += 1;
             UpdateCompanionStats(index);
+            UpdateCompanionSkills(index);
         }
     }
 
@@ -41,6 +42,7 @@ public class CompanionManager : MonoBehaviour
         if(Companions.Count > 0) {
             for(int i = 0; i < Companions.Count; i++ ) {
                 UpdateCompanionStats(i);
+                UpdateCompanionSkills(i);
             }
         } 
     }
@@ -60,6 +62,14 @@ public class CompanionManager : MonoBehaviour
         //Stats
         Companions[index].Constitution = UtilityMisc.Constitution(Companions[index].Class);
         Companions[index].Intelligence = UtilityMisc.Intelligence(Companions[index].Class);
+    }
+
+    void UpdateCompanionSkills(int index) {
+        if(Companions[index].Skills.Count > 0) {
+            for(int i = 0; i < Companions[index].Skills.Count; i++) {
+                Companions[index].Skills[i].ActualModifier = UtilityMisc.CalculateModifier(Companions[index].Level, Companions[index].Skills[i].Modifier);
+            }
+        }
     }
 
     public int GetCount() {

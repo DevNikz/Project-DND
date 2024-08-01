@@ -61,10 +61,10 @@ public class PlayerManager : MonoBehaviour
             LoadPlayer();
         }
 
-        UpdateBasicStats();
-        UpdateProfile();
-        UpdateStats();
-        UpdateSkills();
+        InitBasicStats();
+        InitProfile();
+        InitStats();
+        InitSkills();
     } 
 
     
@@ -72,14 +72,14 @@ public class PlayerManager : MonoBehaviour
         UpdateDebugMenu();
     }
 
-    void UpdateProfile() {
+    void InitProfile() {
         PlayerData.Name = Name;
         PlayerData.Level = Level;
         PlayerData.Class = Class;
         PlayerData.Race = Race;
     }
 
-    void UpdateStats(){
+    void InitStats(){
         ClassStats();
 
         PlayerData.Strength = Strength;
@@ -102,7 +102,7 @@ public class PlayerManager : MonoBehaviour
         Charisma = UtilityMisc.Charisma(Class); 
     }
 
-    void UpdateBasicStats() {
+    void InitBasicStats() {
         Health = 0;
         Mana = 0;
         for(int i = 0; i < Level; i++) {
@@ -116,7 +116,7 @@ public class PlayerManager : MonoBehaviour
         CurrentMana = Mana;
     }
 
-    void UpdateSkills() {
+    void InitSkills() {
         if(Skills.Count > 0) {
             for(int i = 0; i < Skills.Count; i++) {
                 Skills[i].ActualModifier = UtilityMisc.CalculateModifier(Level, Skills[i].Modifier);
@@ -138,11 +138,38 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public void UpdateBasicStats() {
+        Health = 0;
+        Mana = 0;
+        for(int i = 0; i < Level; i++) {
+            Health += UtilityMisc.CalculateHealth(Class, i+1, Constitution); 
+            Mana += UtilityMisc.CalculateMana(Class, i+1, Intelligence);
+        }
+
+        PlayerData.MaxHealth = Health;
+        PlayerData.MaxMana = Mana;
+        CurrentHealth = Health;
+        CurrentMana = Mana;
+    }
+
+    public void UpdateBasicStats(int currentHP, int currentMP) {
+        CurrentHealth = currentHP;
+        CurrentMana = currentMP;
+    }
+
+    public void UpdateSkills() {
+        if(Skills.Count > 0) {
+            for(int i = 0; i < Skills.Count; i++) {
+                Skills[i].ActualModifier = UtilityMisc.CalculateModifier(Level, Skills[i].Modifier);
+            }
+        }
+    }
+
     //SaveManagement
     [ContextMenu("Save")]
     public void SavePlayer() {
-        UpdateProfile();
-        UpdateStats();
+        InitProfile();
+        InitStats();
         SaveSystem.SavePlayer(this);
     }
 
