@@ -14,4 +14,9 @@ public class Character {
     public List<Skill> Skills;
     public int Constitution;
     public int Intelligence;
+
+    public static implicit operator Character(Companion v)
+    {
+        throw new NotImplementedException();
+    }
 }

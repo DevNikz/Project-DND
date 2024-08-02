@@ -11,4 +11,6 @@ public enum Area{
     Plains1,
     Plains2,
     Plains3,
+    Plains4,
+    Plains5,
 }

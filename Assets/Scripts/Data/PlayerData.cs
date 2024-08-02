@@ -12,7 +12,9 @@ public static class PlayerData
 
     //Basic Stats
     public static int MaxHealth { get; set; }
+    public static int CurrentHealth { get; set; }
     public static int MaxMana { get; set; }
+    public static int CurrentMana { get; set; }
 
     //Stats
     public static int Strength { get; set; }

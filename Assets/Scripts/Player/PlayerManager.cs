@@ -61,10 +61,13 @@ public class PlayerManager : MonoBehaviour
             LoadPlayer();
         }
 
-        InitBasicStats();
-        InitProfile();
-        InitStats();
-        InitSkills();
+        else {
+            InitBasicStats();
+            InitProfile();
+            InitStats();
+            InitSkills();
+        }
+
     } 
 
     
@@ -80,6 +83,11 @@ public class PlayerManager : MonoBehaviour
     }
 
     void InitStats(){
+        PlayerData.MaxHealth = Health;
+        PlayerData.CurrentHealth = CurrentHealth;
+        PlayerData.MaxMana = Mana;
+        PlayerData.CurrentMana = CurrentMana;
+
         ClassStats();
 
         PlayerData.Strength = Strength;
@@ -168,18 +176,77 @@ public class PlayerManager : MonoBehaviour
     //SaveManagement
     [ContextMenu("Save")]
     public void SavePlayer() {
+        //Player
         InitProfile();
         InitStats();
         SaveSystem.SavePlayer(this);
+
+        //PlayerSkills
+        for(int i = 0; i < Skills.Count; i++) {
+            Skill skill = new Skill {
+                Category = Skills[i].Category,
+                Type = Skills[i].Type,
+                Modifier = Skills[i].Modifier,
+                ActualModifier = Skills[i].ActualModifier,
+                Requirement = Skills[i].Requirement,
+                Value = Skills[i].Value
+            };
+            SaveSystem.SavePlayerSkills(skill, i);
+        }
+
+        //Companion
+        for(int i = 0; i < CompanionManager.Instance.GetCount(); i++) {
+            Character companion = new Companion {
+                Level = CompanionManager.Instance.Companions[i].Level,
+                Name = CompanionManager.Instance.Companions[i].Name,
+                Class = CompanionManager.Instance.Companions[i].Class,
+                Health = CompanionManager.Instance.Companions[i].Health,
+                CurrentHealth = CompanionManager.Instance.Companions[i].CurrentHealth,
+                Mana = CompanionManager.Instance.Companions[i].Mana,
+                CurrentMana = CompanionManager.Instance.Companions[i].CurrentMana,
+                Constitution = CompanionManager.Instance.Companions[i].Constitution,
+                Intelligence = CompanionManager.Instance.Companions[i].Intelligence
+            };
+            SaveSystem.SaveCompanion(companion, i);
+
+            //Skills
+            for(int j = 0; j < CompanionManager.Instance.Companions[i].Skills.Count; j++) {
+                Skill skill = new Skill {
+                    Category = CompanionManager.Instance.Companions[i].Skills[j].Category,
+                    Type = CompanionManager.Instance.Companions[i].Skills[j].Type,
+                    Modifier = CompanionManager.Instance.Companions[i].Skills[j].Modifier,
+                    ActualModifier = CompanionManager.Instance.Companions[i].Skills[j].ActualModifier,
+                    Requirement = CompanionManager.Instance.Companions[i].Skills[j].Requirement,
+                    Value = CompanionManager.Instance.Companions[i].Skills[j].Value
+                };
+                SaveSystem.SaveCompanionSkills(skill, i, j);
+            }
+        }
     }
 
     [ContextMenu("Load")]
-    public void LoadPlayer() {
+    public void LoadGame() {
+        LoadPlayer();
+        LoadCompanions();
+    }
+
+    void LoadPlayer() {
+        //Player
         PlayerStuffs data = SaveSystem.LoadPlayer();
+
+        //Profile
         Level = data.Level;
         Name = data.Name;
         Class = (EntityClass) System.Enum.Parse(typeof(EntityClass), data.Class);
         Race = (EntityRace) System.Enum.Parse(typeof(EntityRace), data.Race);
+
+        //Stats
+        Health = data.Health;
+        CurrentHealth = data.CurrentHealth;
+        Mana = data.Mana;
+        CurrentMana = data.CurrentMana;
+
+        //DND
         Strength = data.Strength;
         Dexterity = data.Dexterity;
         Constitution = data.Constitution;
@@ -187,8 +254,48 @@ public class PlayerManager : MonoBehaviour
         Wisdom = data.Wisdom;
         Charisma = data.Charisma;
 
+        //Reference
         player.transform.position = new Vector3(data.position[0], data.position[1], data.position[2]);
         CurrentPosition = player.transform.position;
+
+        //Skills
+        SkillStuffs data2;
+        for(int i = 0; i < Skills.Count; i++) {
+            data2 = SaveSystem.LoadPlayerSkills(i);
+            Skills[i].Category = (SkillCategory) System.Enum.Parse(typeof(SkillCategory), data2.Category);
+            Skills[i].Type = (SkillType) System.Enum.Parse(typeof(SkillType), data2.Type);
+            Skills[i].Modifier = data2.Modifier;
+            Skills[i].ActualModifier = data2.ActualModifier;
+            Skills[i].Requirement = (SkillReqType) System.Enum.Parse(typeof(SkillReqType), data2.Requirement);
+            Skills[i].Value = data2.Value;
+        }
+    }
+
+    public void LoadCompanions() {
+        CompanionStuffs data1;
+        SkillStuffs data2;
+        for(int i = 0; i < CompanionManager.Instance.GetCount(); i++) {
+            data1 = SaveSystem.LoadCompanions(i);
+            CompanionManager.Instance.Companions[i].Level = data1.Level;
+            CompanionManager.Instance.Companions[i].Name = (CompanionType) System.Enum.Parse(typeof(CompanionType), data1.Name);
+            CompanionManager.Instance.Companions[i].Class = (EntityClass) System.Enum.Parse(typeof(EntityClass), data1.Class);
+            CompanionManager.Instance.Companions[i].Health = data1.Health;
+            CompanionManager.Instance.Companions[i].CurrentHealth = data1.CurrentHealth;
+            CompanionManager.Instance.Companions[i].Mana = data1.Mana;
+            CompanionManager.Instance.Companions[i].CurrentMana = data1.CurrentMana;
+            CompanionManager.Instance.Companions[i].Constitution = data1.Constitution;
+            CompanionManager.Instance.Companions[i].Intelligence = data1.Intelligence;
+
+            for(int j = 0; j < CompanionManager.Instance.Companions[i].Skills.Count; j++) {
+                data2 = SaveSystem.LoadCompanionSkills(i, j);
+                CompanionManager.Instance.Companions[i].Skills[j].Category = (SkillCategory) System.Enum.Parse(typeof(SkillCategory), data2.Category);
+                CompanionManager.Instance.Companions[i].Skills[j].Type = (SkillType) System.Enum.Parse(typeof(SkillType), data2.Type);
+                CompanionManager.Instance.Companions[i].Skills[j].Modifier = data2.Modifier;
+                CompanionManager.Instance.Companions[i].Skills[j].ActualModifier = data2.ActualModifier;
+                CompanionManager.Instance.Companions[i].Skills[j].Requirement = (SkillReqType) System.Enum.Parse(typeof(SkillReqType), data2.Requirement);
+                CompanionManager.Instance.Companions[i].Skills[j].Value = data2.Value;
+            }
+        }
     }
 
     //Debug (Cheats)

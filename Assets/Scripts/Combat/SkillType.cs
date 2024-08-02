@@ -9,6 +9,12 @@ public enum SkillType {
     Bite,
     Scratch,
 
+    //RangedPhysical
+    BowShot, //Single
+    CriticalShot, //Single
+    TripleShot, //All
+    
+
     //Magical
     FireArrow,
     IceSpikes,
