@@ -17,7 +17,7 @@ public static class SaveSystem
         stream.Close();
     }
 
-    public static void SaveCompanion(Character companion, int index) {
+    public static void SaveCompanion(Companion companion, int index) {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + $"/companion{index}.kek";
         FileStream stream = new FileStream(path, FileMode.Create);

@@ -58,7 +58,7 @@ public class PlayerManager : MonoBehaviour
         //Save
         string path = Application.persistentDataPath + "/player.kek";
         if(File.Exists(path)) {
-            LoadPlayer();
+            LoadGame();
         }
 
         else {
@@ -195,8 +195,9 @@ public class PlayerManager : MonoBehaviour
         }
 
         //Companion
+        Companion companion;
         for(int i = 0; i < CompanionManager.Instance.GetCount(); i++) {
-            Character companion = new Companion {
+            companion = new Companion {
                 Level = CompanionManager.Instance.Companions[i].Level,
                 Name = CompanionManager.Instance.Companions[i].Name,
                 Class = CompanionManager.Instance.Companions[i].Class,

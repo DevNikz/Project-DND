@@ -18,10 +18,10 @@ public class CompanionStuffs {
     public int Constitution;
     public int Intelligence;
 
-    public CompanionStuffs(Character companion) {
+    public CompanionStuffs(Companion companion) {
         //Profile
         Level = companion.Level;
-        Name = companion.Name;
+        Name = companion.Name.ToString();
         Class = companion.Class.ToString();
 
         //Stats
